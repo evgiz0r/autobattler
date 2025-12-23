@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1v1 Autobattler</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div id="game-container">
+        <div id="ui-top">
+            <div id="player-stats">
+                <h3>Player</h3>
+                <div>Health: <span id="player-health">100</span></div>
+                <div>Gold: <span id="player-gold">50</span></div>
+                <div>Round: <span id="round-number">0</span></div>
+                <div>Next Round: <span id="round-timer">5</span>s</div>
+                <button id="pause-btn" style="margin-top: 10px;">Pause</button>
+                <button id="target-lines-btn" style="margin-top: 5px;">Show Target Lines</button>
+                <button id="economy-upgrade-btn" style="margin-top: 5px; background: #f39c12;">Economy +1g/s (50g)</button>
+            </div>
+            <div id="ai-stats">
+                <h3>AI</h3>
+                <div>Health: <span id="ai-health">100</span></div>
+                <div>Gold: <span id="ai-gold">50</span></div>
+                <div style="color: #e74c3c; font-weight: bold;">Boost: <span id="ai-boost">110</span>%</div>
+            </div>
+        </div>
+
+        <div id="game-board">
+            <div id="player-zone" class="zone">
+                <h4>Build Area</h4>
+            </div>
+            <div id="battle-zone" class="zone">
+                <h4>Battleground</h4>
+            </div>
+            <div id="ai-zone" class="zone">
+                <h4>AI Area</h4>
+            </div>
+        </div>
+
+        <div id="ui-bottom">
+            <div id="unit-shop">
+                <h3>Unit Shop</h3>
+                <div id="tier-1-units" class="tier-section">
+                    <h4>Tier 1</h4>
+                    <button class="buy-btn" data-unit="melee1">
+                        Melee (15g)<br>
+                        <small>HP:100 DMG:15 RNG:35 SPD:120</small>
+                    </button>
+                    <button class="buy-btn" data-unit="ranged1">
+                        Ranged (15g)<br>
+                        <small>HP:60 DMG:28 RNG:120 SPD:105</small>
+                    </button>
+                    <button class="buy-btn" data-unit="caster1">
+                        Caster (20g)<br>
+                        <small>HP:50 DMG:35 RNG:140 AOE:40</small>
+                    </button>
+                </div>
+                <div id="tier-2-units" class="tier-section locked">
+                    <h4>Tier 2 (Unlocks Round 6)</h4>
+                    <button class="buy-btn" data-unit="melee2" disabled>
+                        Melee (30g)<br>
+                        <small>HP:200 DMG:35 RNG:40 SPD:135</small>
+                    </button>
+                    <button class="buy-btn" data-unit="ranged2" disabled>
+                        Ranged (40g)<br>
+                        <small>HP:120 DMG:56 RNG:150 SPD:120</small>
+                    </button>
+                    <button class="buy-btn" data-unit="caster2" disabled>
+                        Caster (50g)<br>
+                        <small>HP:100 DMG:60 RNG:170 AOE:50</small>
+                    </button>
+                </div>
+                <div id="tier-3-units" class="tier-section locked">
+                    <h4>Tier 3 (Unlocks Round 12)</h4>
+                    <button class="buy-btn" data-unit="melee3" disabled>
+                        Melee (80g)<br>
+                        <small>HP:400 DMG:70 RNG:45 SPD:150</small>
+                    </button>
+                    <button class="buy-btn" data-unit="ranged3" disabled>
+                        Ranged (100g)<br>
+                        <small>HP:250 DMG:112 RNG:180 SPD:135</small>
+                    </button>
+                    <button class="buy-btn" data-unit="caster3" disabled>
+                        Caster (120g)<br>
+                        <small>HP:200 DMG:100 RNG:200 AOE:60</small>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load scripts in dependency order -->
+    <script src="js/config/gameConfig.js"></script>
+    <script src="js/config/unitDefinitions.js"></script>
+    <script src="js/classes/Unit.js"></script>
+    <script src="js/ui/rendering.js"></script>
+    <script src="js/systems/economy.js"></script>
+    <script src="js/systems/spawning.js"></script>
+    <script src="js/systems/ai.js"></script>
+    <script src="js/systems/battle.js"></script>
+    <script src="js/ui/uiManager.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

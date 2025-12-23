@@ -1,0 +1,116 @@
+// Unit class definition
+class Unit {
+    constructor(definition, owner, x, y) {
+        this.id = Math.random().toString(36).substr(2, 9);
+        this.owner = owner; // 'player' or 'ai'
+        this.name = definition.name;
+        this.type = definition.type;
+        this.tier = definition.tier;
+        
+        // Stats
+        this.hp = definition.hp;
+        this.maxHp = definition.maxHp;
+        this.damage = definition.damage;
+        this.attackRange = definition.attackRange;
+        this.attackCooldown = definition.attackCooldown;
+        this.speed = definition.speed;
+        this.aoeRadius = definition.aoeRadius || 0;
+        
+        // Position
+        this.x = x;
+        this.y = y;
+        
+        // State
+        this.lastAttackTime = 0;
+        this.target = null;
+        this.isDead = false;
+        this.createdAt = Date.now(); // Track creation time
+        this.expirationTime = this.getExpirationTime(); // Time until unit expires in build zone
+        
+        // DOM references
+        this.element = null;
+        this.targetLine = null;
+    }
+    
+    getExpirationTime() {
+        // More balanced expiration times: T1: 60s, T2: 80s, T3: 100s
+        switch(this.tier) {
+            case 1: return 60000;
+            case 2: return 80000;
+            case 3: return 100000;
+            default: return 50000;
+        }
+    }
+    
+    takeDamage(amount) {
+        this.hp -= amount;
+        if (this.hp <= 0) {
+            this.hp = 0;
+            this.isDead = true;
+            
+            // Clean up DOM elements
+            if (this.element) {
+                this.element.remove();
+                this.element = null;
+            }
+            if (this.targetLine) {
+                this.targetLine.remove();
+                this.targetLine = null;
+            }
+        }
+        this.updateHealthBar();
+    }
+    
+    updateHealthBar() {
+        if (this.element) {
+            const healthFill = this.element.querySelector('.health-bar-fill');
+            if (healthFill) {
+                const percent = (this.hp / this.maxHp) * 100;
+                healthFill.style.width = percent + '%';
+            }
+            const hpText = this.element.querySelector('.unit-hp');
+            if (hpText) {
+                hpText.textContent = Math.ceil(this.hp);
+            }
+        }
+    }
+    
+    updateCooldownBar(currentTime) {
+        if (this.element) {
+            const cooldownFill = this.element.querySelector('.cooldown-bar-fill');
+            if (cooldownFill) {
+                const timeSinceAttack = currentTime - this.lastAttackTime;
+                const percent = Math.min(100, (timeSinceAttack / this.attackCooldown) * 100);
+                cooldownFill.style.width = percent + '%';
+            }
+        }
+    }
+    
+    updateExpirationTimer() {
+        if (this.element) {
+            const timerText = this.element.querySelector('.unit-timer');
+            if (timerText) {
+                const timeLeft = Math.max(0, this.expirationTime - (Date.now() - this.createdAt));
+                const seconds = Math.ceil(timeLeft / 1000);
+                timerText.textContent = seconds + 's';
+                
+                // Change color when time is low
+                if (seconds <= 10) {
+                    timerText.style.color = '#e74c3c';
+                } else if (seconds <= 20) {
+                    timerText.style.color = '#f39c12';
+                } else {
+                    timerText.style.color = '#ecf0f1';
+                }
+            }
+        }
+    }
+    
+    canAttack(currentTime) {
+        return currentTime - this.lastAttackTime >= this.attackCooldown;
+    }
+    
+    attack(currentTime) {
+        this.lastAttackTime = currentTime;
+    }
+}
