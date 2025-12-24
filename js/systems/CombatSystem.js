@@ -40,6 +40,9 @@ const CombatSystem = {
         
         setTimeout(() => meleeEffect.remove(), 200);
         
+        // Play hit sound
+        SoundSystem.playHit();
+        
         const wasDead = target.hp <= 0;
         target.takeDamage(unit.damage);
         
@@ -95,6 +98,10 @@ const CombatSystem = {
         
         for (let i = 0; i < Math.min(maxTargets, enemiesInRange.length); i++) {
             const enemy = enemiesInRange[i].enemy;
+            
+            // Play hit sound
+            SoundSystem.playHit();
+            
             const wasDead = enemy.hp <= 0;
             enemy.takeDamage(unit.damage);
             

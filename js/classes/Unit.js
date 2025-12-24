@@ -70,6 +70,9 @@ class Unit {
             this.hp = 0;
             this.isDead = true;
             
+            // Play death sound
+            SoundSystem.playUnitDeath();
+            
             // Clean up DOM elements
             if (this.element) {
                 this.element.remove();

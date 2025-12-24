@@ -246,4 +246,12 @@ function setupEventListeners() {
             updateUI();
         });
     });
+    
+    // Sound toggle button
+    document.getElementById('sound-toggle-btn').addEventListener('click', () => {
+        SoundSystem.toggle();
+        const btn = document.getElementById('sound-toggle-btn');
+        btn.textContent = SoundSystem.enabled ? 'Sound: ON' : 'Sound: OFF';
+        btn.style.background = SoundSystem.enabled ? '' : '#e74c3c';
+    });
 }

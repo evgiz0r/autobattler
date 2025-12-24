@@ -83,6 +83,9 @@ const ProjectileSystem = {
             const dist = MathUtils.distance2D(proj, enemy);
             
             if (dist < 12) {
+                // Play hit sound
+                SoundSystem.playHit();
+                
                 const wasDead = enemy.hp <= 0;
                 enemy.takeDamage(proj.damage);
                 

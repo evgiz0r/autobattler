@@ -55,6 +55,9 @@ function startRound() {
     gameState.isRoundActive = true;
     gameState.round++;
     
+    // Play round begin sound
+    SoundSystem.playRoundBegin();
+    
     // Check for auto-unlocking tiers
     checkAutoUnlockTiers();
     
