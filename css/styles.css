@@ -77,12 +77,6 @@ body {
     opacity: 0.5;
 }
 
-.gold-and-economy {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-}
-
 .zone-gold {
     background: rgba(52, 152, 219, 0.9);
     padding: 8px 15px;
@@ -93,15 +87,20 @@ body {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
     text-align: center;
     border: 2px solid #2980b9;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
 }
 
 .economy-btn {
     background: #f39c12 !important;
-    padding: 6px 10px !important;
-    font-size: 12px !important;
+    padding: 4px 8px !important;
+    font-size: 11px !important;
     white-space: nowrap;
     margin: 0 !important;
-    width: 100%;
+    border-radius: 4px !important;
+    flex-shrink: 0;
 }
 
 .economy-btn:hover:not(:disabled) {
