@@ -37,8 +37,13 @@ body {
 #game-board {
     display: flex;
     gap: 10px;
-    height: 280px;
     margin-bottom: 10px;
+}
+
+.zone-container {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
 }
 
 .zone {
@@ -48,10 +53,11 @@ body {
     padding: 8px;
     position: relative;
     overflow: hidden;
+    height: 280px;
 }
 
 #player-zone {
-    flex: 0 0 200px;
+    width: 200px;
     border-color: #3498db;
 }
 
@@ -61,7 +67,7 @@ body {
 }
 
 #ai-zone {
-    flex: 0 0 200px;
+    width: 200px;
     border-color: #e67e22;
 }
 
@@ -72,17 +78,15 @@ body {
 }
 
 .zone-gold {
-    position: absolute;
-    bottom: 8px;
-    left: 8px;
-    background: rgba(52, 152, 219, 0.8);
-    padding: 5px 10px;
-    border-radius: 4px;
+    background: rgba(52, 152, 219, 0.9);
+    padding: 8px 15px;
+    border-radius: 6px;
     font-weight: bold;
-    font-size: 14px;
+    font-size: 16px;
     color: white;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    text-align: center;
+    border: 2px solid #2980b9;
 }
 
 .battle-info {

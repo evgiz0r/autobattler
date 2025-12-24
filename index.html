@@ -25,19 +25,25 @@
         </div>
 
         <div id="game-board">
-            <div id="player-zone" class="zone">
-                <h4>Build Area</h4>
+            <div class="zone-container">
                 <div class="zone-gold">Gold: <span id="player-gold">50</span></div>
-            </div>
-            <div id="battle-zone" class="zone">
-                <div class="battle-info">
-                    <div class="round-display">Round: <span id="round-number">0</span></div>
-                    <div class="timer-display">Next: <span id="round-timer">10</span>s</div>
+                <div id="player-zone" class="zone">
+                    <h4>Build Area</h4>
                 </div>
             </div>
-            <div id="ai-zone" class="zone">
-                <h4>AI Area</h4>
+            <div class="zone-container">
+                <div id="battle-zone" class="zone">
+                    <div class="battle-info">
+                        <div class="round-display">Round: <span id="round-number">0</span></div>
+                        <div class="timer-display">Next: <span id="round-timer">10</span>s</div>
+                    </div>
+                </div>
+            </div>
+            <div class="zone-container">
                 <div class="zone-gold">Gold: <span id="ai-gold">50</span></div>
+                <div id="ai-zone" class="zone">
+                    <h4>AI Area</h4>
+                </div>
             </div>
         </div>
 
