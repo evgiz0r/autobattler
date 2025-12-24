@@ -13,9 +13,6 @@
             <div id="player-stats">
                 <h3>Player</h3>
                 <div>Health: <span id="player-health">100</span></div>
-                <div>Gold: <span id="player-gold">50</span></div>
-                <div>Round: <span id="round-number">0</span></div>
-                <div>Next Round: <span id="round-timer">5</span>s</div>
                 <button id="pause-btn" style="margin-top: 10px;">Pause</button>
                 <button id="target-lines-btn" style="margin-top: 5px;">Hide Target Lines</button>
                 <button id="economy-upgrade-btn" style="margin-top: 5px; background: #f39c12;">Economy +1g/s (50g)</button>
@@ -23,7 +20,6 @@
             <div id="ai-stats">
                 <h3>AI</h3>
                 <div>Health: <span id="ai-health">100</span></div>
-                <div>Gold: <span id="ai-gold">50</span></div>
                 <div style="color: #e74c3c; font-weight: bold;">Boost: <span id="ai-boost">110</span>%</div>
             </div>
         </div>
@@ -31,12 +27,17 @@
         <div id="game-board">
             <div id="player-zone" class="zone">
                 <h4>Build Area</h4>
+                <div class="zone-gold">Gold: <span id="player-gold">50</span></div>
             </div>
             <div id="battle-zone" class="zone">
-                <h4>Battleground</h4>
+                <div class="battle-info">
+                    <div class="round-display">Round: <span id="round-number">0</span></div>
+                    <div class="timer-display">Next: <span id="round-timer">10</span>s</div>
+                </div>
             </div>
             <div id="ai-zone" class="zone">
                 <h4>AI Area</h4>
+                <div class="zone-gold">Gold: <span id="ai-gold">50</span></div>
             </div>
         </div>
 

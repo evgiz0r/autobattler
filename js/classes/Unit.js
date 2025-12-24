@@ -56,13 +56,8 @@ class Unit {
     }
     
     getExpirationTime() {
-        // More balanced expiration times: T1: 60s, T2: 80s, T3: 100s
-        switch(this.tier) {
-            case 1: return 60000;
-            case 2: return 80000;
-            case 3: return 100000;
-            default: return 50000;
-        }
+        // Consistent 60 seconds for all tiers
+        return 60000;
     }
     
     takeDamage(amount) {
