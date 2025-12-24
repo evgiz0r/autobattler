@@ -47,7 +47,7 @@ const UNIT_DEFINITIONS = {
         damage: 0,
         healAmount: 12,
         maxTargets: 1,
-        attackRange: 100,
+        attackRange: 50,
         attackCooldown: 2500,
         speed: 72,
         aoeRadius: 0
@@ -99,7 +99,7 @@ const UNIT_DEFINITIONS = {
         damage: 0,
         healAmount: 18,
         maxTargets: 3,
-        attackRange: 120,
+        attackRange: 60,
         attackCooldown: 2200,
         speed: 80,
         aoeRadius: 0
@@ -151,7 +151,7 @@ const UNIT_DEFINITIONS = {
         damage: 0,
         healAmount: 28,
         maxTargets: 6,
-        attackRange: 150,
+        attackRange: 70,
         attackCooldown: 2000,
         speed: 88,
         aoeRadius: 0
@@ -204,7 +204,7 @@ const UNIT_DEFINITIONS = {
         damage: 0,
         healAmount: 47,
         maxTargets: 8,
-        attackRange: 170,
+        attackRange: 75,
         attackCooldown: 1900,
         speed: 100,
         aoeRadius: 0
@@ -257,7 +257,7 @@ const UNIT_DEFINITIONS = {
         damage: 0,
         healAmount: 77,
         maxTargets: 10,
-        attackRange: 190,
+        attackRange: 80,
         attackCooldown: 1800,
         speed: 112,
         aoeRadius: 0
@@ -310,7 +310,7 @@ const UNIT_DEFINITIONS = {
         damage: 0,
         healAmount: 127,
         maxTargets: 12,
-        attackRange: 210,
+        attackRange: 85,
         attackCooldown: 1700,
         speed: 124,
         aoeRadius: 0
@@ -363,7 +363,7 @@ const UNIT_DEFINITIONS = {
         damage: 0,
         healAmount: 203,
         maxTargets: 15,
-        attackRange: 230,
+        attackRange: 90,
         attackCooldown: 1600,
         speed: 136,
         aoeRadius: 0

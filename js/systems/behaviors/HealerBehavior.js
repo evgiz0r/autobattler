@@ -27,7 +27,20 @@ class HealerBehavior extends UnitBehavior {
             const allies = battleContext.getAllies(this.unit.owner).filter(u => 
                 u.id !== this.unit.id && u.hp < u.maxHp
             );
-            this.healAllies(allies, currentTime);
+            
+            // Filter allies within range
+            const alliesInRange = allies.filter(ally => {
+                const dist = MathUtils.distance2D(this.unit, ally);
+                return dist <= this.unit.attackRange;
+            });
+            
+            if (alliesInRange.length > 0) {
+                // Heal allies in range
+                this.healAllies(allies, currentTime);
+            } else {
+                // No wounded allies in range, move forward
+                MovementSystem.moveTowardsBase(this.unit, deltaTime, battleContext.battleWidth);
+            }
         }
     }
     

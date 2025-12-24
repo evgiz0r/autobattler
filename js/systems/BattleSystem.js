@@ -30,6 +30,11 @@ const BattleSystem = {
                 continue;
             }
             
+            // Check if unit is stuck and apply random movement
+            if (unit.checkIfStuck(currentTime)) {
+                unit.applyRandomUnstuck(deltaTime);
+            }
+            
             // Update unit using its behavior
             if (unit.behavior) {
                 unit.behavior.update(deltaTime, currentTime, BattleContext);

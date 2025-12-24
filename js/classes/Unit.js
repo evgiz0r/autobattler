@@ -26,6 +26,11 @@ class Unit {
         this.x = x;
         this.y = y;
         
+        // Stuck detection
+        this.lastPosition = { x: x, y: y };
+        this.lastMovementCheck = 0;
+        this.stuckCounter = 0;
+        
         // State
         this.lastAttackTime = 0;
         this.target = null;
@@ -142,6 +147,59 @@ class Unit {
         // Units are invulnerable for 0.5 seconds after spawning
         if (this.spawnTime === null) return false;
         return (currentTime - this.spawnTime) < 500; // 500ms invulnerability
+    }
+    
+    checkIfStuck(currentTime) {
+        // Don't check stuck if unit recently attacked (they're supposed to be stationary)
+        if (currentTime - this.lastAttackTime < 3000) {
+            this.stuckCounter = 0;
+            this.lastPosition = { x: this.x, y: this.y };
+            this.lastMovementCheck = currentTime;
+            return false;
+        }
+        
+        // Check every 1000ms if unit has moved
+        if (currentTime - this.lastMovementCheck < 1000) return false;
+        
+        const distanceMoved = Math.sqrt(
+            Math.pow(this.x - this.lastPosition.x, 2) + 
+            Math.pow(this.y - this.lastPosition.y, 2)
+        );
+        
+        // If moved less than 3 pixels in 1 second, consider stuck
+        if (distanceMoved < 3) {
+            this.stuckCounter++;
+        } else {
+            this.stuckCounter = 0;
+        }
+        
+        this.lastPosition = { x: this.x, y: this.y };
+        this.lastMovementCheck = currentTime;
+        
+        // Return true if stuck for 3 consecutive checks (3 seconds)
+        return this.stuckCounter >= 3;
+    }
+    
+    applyRandomUnstuck(deltaTime) {
+        // Apply instant random movement to escape stuck position
+        const randomAngle = Math.random() * Math.PI * 2;
+        const unstuckDistance = 30; // Instant displacement
+        
+        this.x += Math.cos(randomAngle) * unstuckDistance;
+        this.y += Math.sin(randomAngle) * unstuckDistance;
+        
+        // Keep within battlefield bounds
+        this.y = Math.max(10, Math.min(260, this.y));
+        
+        // Reset stuck counter and force position update
+        this.stuckCounter = 0;
+        this.lastPosition = { x: this.x, y: this.y };
+        
+        // Update visual position immediately
+        if (this.element) {
+            this.element.style.left = this.x + 'px';
+            this.element.style.top = this.y + 'px';
+        }
     }
     
     attack(currentTime) {
