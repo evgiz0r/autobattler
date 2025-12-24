@@ -28,6 +28,8 @@ class Unit {
         this.isDead = false;
         this.createdAt = Date.now(); // Track creation time
         this.expirationTime = this.getExpirationTime(); // Time until unit expires in build zone
+        this.pausedTime = 0; // Track total paused time
+        this.lastPauseStart = null; // Track when pause started
         
         // DOM references
         this.element = null;
@@ -111,7 +113,9 @@ class Unit {
         if (this.element) {
             const timerText = this.element.querySelector('.unit-timer');
             if (timerText) {
-                const timeLeft = Math.max(0, this.expirationTime - (Date.now() - this.createdAt));
+                // Account for paused time
+                const elapsed = Date.now() - this.createdAt - this.pausedTime;
+                const timeLeft = Math.max(0, this.expirationTime - elapsed);
                 const seconds = Math.ceil(timeLeft / 1000);
                 timerText.textContent = seconds + 's';
                 

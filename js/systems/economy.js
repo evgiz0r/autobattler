@@ -1,6 +1,9 @@
 // Economy system - handles gold generation and rewards
 
 function updatePassiveGold(deltaTime) {
+    // Only generate gold if game has started
+    if (!gameState.firstUnitPlaced) return;
+    
     gameState.passiveGoldTimer += deltaTime;
     if (gameState.passiveGoldTimer >= GAME_CONFIG.PASSIVE_GOLD_INTERVAL) {
         const baseGold = GAME_CONFIG.PASSIVE_GOLD_AMOUNT;

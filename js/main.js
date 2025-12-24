@@ -43,8 +43,8 @@ function gameLoop(timestamp) {
         // Clean up old projectiles
         ProjectileSystem.cleanupOldProjectiles(timestamp);
         
-        // AI buying (using strategy pattern)
-        if (Math.random() < gameState.aiStrategy.getPurchaseChance()) {
+        // AI buying (using strategy pattern) - only after game starts
+        if (gameState.firstUnitPlaced && Math.random() < gameState.aiStrategy.getPurchaseChance()) {
             aiPurchaseUnits();
         }
         
@@ -76,7 +76,7 @@ function cleanupExpiredUnits() {
     gameState.units = gameState.units.filter(unit => {
         // Only check units in build zones (not battlefield)
         if (unit.element && (unit.element.parentElement === DOM.playerZone || unit.element.parentElement === DOM.aiZone)) {
-            const timeAlive = now - unit.createdAt;
+            const timeAlive = now - unit.createdAt - unit.pausedTime;
             if (timeAlive >= unit.expirationTime) {
                 // Unit expired, remove it
                 if (unit.element) {

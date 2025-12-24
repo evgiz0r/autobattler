@@ -20,8 +20,11 @@ function updateUI() {
     const totalBonus = 1 + tierBonus + economyBonus; // base 1 + bonuses
     document.getElementById('player-gold').textContent = `${gameState.player.gold} (+${totalBonus}/s)`;
     
+    const aiTierBonus = gameState.ai.unlockedTiers.length - 1;
+    const aiTotalBonus = Math.round((1 + aiTierBonus) * GAME_CONFIG.AI_GOLD_MULTIPLIER * 10) / 10;
+    
     document.getElementById('ai-health').textContent = gameState.ai.health;
-    document.getElementById('ai-gold').textContent = gameState.ai.gold;
+    document.getElementById('ai-gold').textContent = `${gameState.ai.gold} (+${aiTotalBonus}/s)`;
     document.getElementById('round-number').textContent = gameState.round;
     document.getElementById('round-timer').textContent = Math.ceil(gameState.roundTimer);
     document.getElementById('ai-boost').textContent = Math.round(GAME_CONFIG.AI_GOLD_MULTIPLIER * 100);
@@ -125,8 +128,26 @@ function setupEventListeners() {
     
     // Pause button
     document.getElementById('pause-btn').addEventListener('click', () => {
+        const wasPaused = gameState.isPaused;
         gameState.isPaused = !gameState.isPaused;
         document.getElementById('pause-btn').textContent = gameState.isPaused ? 'Resume' : 'Pause';
+        
+        // Track pause time for all units
+        const now = Date.now();
+        if (gameState.isPaused) {
+            // Game just paused - mark pause start time for all units
+            gameState.units.forEach(unit => {
+                unit.lastPauseStart = now;
+            });
+        } else if (wasPaused) {
+            // Game just unpaused - add elapsed pause time to all units
+            gameState.units.forEach(unit => {
+                if (unit.lastPauseStart) {
+                    unit.pausedTime += now - unit.lastPauseStart;
+                    unit.lastPauseStart = null;
+                }
+            });
+        }
     });
     
     // Target lines toggle
