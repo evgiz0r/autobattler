@@ -43,7 +43,8 @@ const gameState = {
     passiveGoldTimer: 0,
     isPaused: false,
     showTargetLines: false,
-    cursorPreview: null
+    cursorPreview: null,
+    aiStrategy: null // Will be initialized in init()
 };
 
 // DOM element references

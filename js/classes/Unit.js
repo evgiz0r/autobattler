@@ -11,6 +11,8 @@ class Unit {
         this.hp = definition.hp;
         this.maxHp = definition.maxHp;
         this.damage = definition.damage;
+        this.healAmount = definition.healAmount || 0;
+        this.maxTargets = definition.maxTargets || 0;
         this.attackRange = definition.attackRange;
         this.attackCooldown = definition.attackCooldown;
         this.speed = definition.speed;
@@ -30,6 +32,25 @@ class Unit {
         // DOM references
         this.element = null;
         this.targetLine = null;
+        
+        // Behavior system
+        this.behavior = this.createBehavior();
+    }
+    
+    createBehavior() {
+        // Create appropriate behavior based on unit type
+        switch(this.type) {
+            case 'melee':
+                return new MeleeBehavior(this);
+            case 'ranged':
+                return new RangedBehavior(this);
+            case 'caster':
+                return new CasterBehavior(this);
+            case 'healer':
+                return new HealerBehavior(this);
+            default:
+                return new MeleeBehavior(this);
+        }
     }
     
     getExpirationTime() {

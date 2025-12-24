@@ -27,12 +27,147 @@ function updateBattle(deltaTime, currentTime) {
     updateUI();
 }
 
+function updateHealer(healer, deltaTime, currentTime, battleWidth) {
+    // Find allies that need healing
+    const allies = gameState.units.filter(u => 
+        !u.isDead && 
+        u.owner === healer.owner && 
+        u.id !== healer.id && 
+        u.hp < u.maxHp &&
+        u.element && u.element.parentElement === DOM.battleZone
+    );
+    
+    if (allies.length === 0) {
+        // No allies to heal, move forward
+        moveTowardsEnemyBase(healer, deltaTime, battleWidth);
+        if (healer.element) {
+            healer.element.style.left = healer.x + 'px';
+            healer.element.style.top = healer.y + 'px';
+        }
+        healer.updateCooldownBar(currentTime);
+        return;
+    }
+    
+    // Find closest injured ally
+    const closestAlly = findClosestAlly(healer, allies);
+    
+    if (!closestAlly) {
+        moveTowardsEnemyBase(healer, deltaTime, battleWidth);
+        if (healer.element) {
+            healer.element.style.left = healer.x + 'px';
+            healer.element.style.top = healer.y + 'px';
+        }
+        healer.updateCooldownBar(currentTime);
+        return;
+    }
+    
+    // Calculate distance to closest ally
+    const dx = closestAlly.x - healer.x;
+    const dy = closestAlly.y - healer.y;
+    const actualDistance = Math.sqrt(dx * dx + dy * dy);
+    
+    if (actualDistance > healer.attackRange) {
+        // Move towards ally
+        moveTowardsEnemy(healer, deltaTime, battleWidth);
+    } else {
+        // Heal allies (AOE healing)
+        healAllies(healer, allies, currentTime);
+    }
+    
+    // Update visual position
+    if (healer.element) {
+        healer.element.style.left = healer.x + 'px';
+        healer.element.style.top = healer.y + 'px';
+    }
+    
+    // Update cooldown bar
+    healer.updateCooldownBar(currentTime);
+}
+
+function findClosestAlly(unit, allies) {
+    let closest = null;
+    let minDist = Infinity;
+    
+    for (let ally of allies) {
+        const dx = ally.x - unit.x;
+        const dy = ally.y - unit.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        
+        if (dist < minDist) {
+            minDist = dist;
+            closest = ally;
+        }
+    }
+    
+    return closest;
+}
+
+function healAllies(healer, allies, currentTime) {
+    if (currentTime - healer.lastAttackTime < healer.attackCooldown) {
+        return;
+    }
+    
+    healer.lastAttackTime = currentTime;
+    
+    // Filter allies to only those within range
+    const alliesInRange = allies.filter(ally => {
+        const dx = ally.x - healer.x;
+        const dy = ally.y - healer.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        return dist <= healer.attackRange;
+    });
+    
+    if (alliesInRange.length === 0) return;
+    
+    // Sort allies by distance and hp (prioritize low HP and close)
+    const sortedAllies = alliesInRange.slice().sort((a, b) => {
+        const hpPercentA = a.hp / a.maxHp;
+        const hpPercentB = b.hp / b.maxHp;
+        
+        // Prioritize lower HP percentage
+        if (Math.abs(hpPercentA - hpPercentB) > 0.1) {
+            return hpPercentA - hpPercentB;
+        }
+        
+        // Then by distance
+        const distA = Math.sqrt(Math.pow(a.x - healer.x, 2) + Math.pow(a.y - healer.y, 2));
+        const distB = Math.sqrt(Math.pow(b.x - healer.x, 2) + Math.pow(b.y - healer.y, 2));
+        return distA - distB;
+    });
+    
+    // Heal up to maxTargets allies
+    const targetsToHeal = Math.min(healer.maxTargets, sortedAllies.length);
+    
+    for (let i = 0; i < targetsToHeal; i++) {
+        const ally = sortedAllies[i];
+        const healAmount = healer.healAmount;
+        ally.hp = Math.min(ally.hp + healAmount, ally.maxHp);
+        
+        // Update health bar
+        if (ally.element) {
+            const healthBar = ally.element.querySelector('.health-bar');
+            if (healthBar) {
+                const healthPercent = (ally.hp / ally.maxHp) * 100;
+                healthBar.style.width = healthPercent + '%';
+            }
+        }
+    }
+    
+    console.log(`${healer.name} healed ${targetsToHeal} allies for ${healer.healAmount} each!`);
+}
+
 function updateUnit(unit, deltaTime, currentTime, battleWidth) {
     // Find enemies in battle zone
     const enemies = gameState.units.filter(u => 
         !u.isDead && u.owner !== unit.owner && 
         u.element && u.element.parentElement === DOM.battleZone
     );
+    
+    // Healers have different logic - they target allies
+    if (unit.type === 'healer') {
+        updateHealer(unit, deltaTime, currentTime, battleWidth);
+        return;
+    }
     
     // Clean up invalid targets (dead or not in battle anymore)
     if (unit.target && (unit.target.isDead || !enemies.includes(unit.target))) {
@@ -206,11 +341,22 @@ function moveTowardsEnemyMelee(unit, target, deltaTime, battleWidth) {
 
 function moveTowardsEnemy(unit, deltaTime, battleWidth) {
     // Move horizontally only to maintain lanes (ranged/caster)
+    // Don't move past the target if we have one
+    let targetX = unit.target ? unit.target.x : null;
+    
     let newX = unit.x;
     if (unit.owner === 'player') {
         newX = unit.x + unit.speed * (deltaTime / 1000);
+        // Don't move past target
+        if (targetX !== null && newX > targetX - unit.attackRange * 0.8) {
+            newX = Math.max(unit.x, targetX - unit.attackRange * 0.8);
+        }
     } else {
         newX = unit.x - unit.speed * (deltaTime / 1000);
+        // Don't move past target
+        if (targetX !== null && newX < targetX + unit.attackRange * 0.8) {
+            newX = Math.min(unit.x, targetX + unit.attackRange * 0.8);
+        }
     }
     
     // Try to move, allow movement even with slight collision

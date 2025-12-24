@@ -1,5 +1,13 @@
 // UI Manager - handles UI updates and event listeners
 
+function initializeGame() {
+    // Initialize AI strategy (can be changed to other strategies)
+    gameState.aiStrategy = new BalancedAIStrategy('normal');
+    // Alternative strategies:
+    // gameState.aiStrategy = new RandomAIStrategy();
+    // gameState.aiStrategy = new AggressiveAIStrategy();
+}
+
 function updateUI() {
     document.getElementById('player-health').textContent = gameState.player.health;
     document.getElementById('player-gold').textContent = gameState.player.gold;

@@ -46,45 +46,57 @@
                     <h4>Tier 1</h4>
                     <button class="buy-btn" data-unit="melee1">
                         Melee (15g)<br>
-                        <small>HP:100 DMG:15 RNG:35 SPD:120</small>
+                        <small>HP:400 DMG:15 RNG:35 SPD:120</small>
                     </button>
                     <button class="buy-btn" data-unit="ranged1">
                         Ranged (15g)<br>
-                        <small>HP:60 DMG:28 RNG:120 SPD:105</small>
+                        <small>HP:60 DMG:84 RNG:120 SPD:105</small>
                     </button>
                     <button class="buy-btn" data-unit="caster1">
                         Caster (20g)<br>
-                        <small>HP:50 DMG:35 RNG:140 AOE:40</small>
+                        <small>HP:50 DMG:70 RNG:140 AOE:40</small>
+                    </button>
+                    <button class="buy-btn" data-unit="healer1">
+                        Healer (18g)<br>
+                        <small>HP:80 HEAL:50 TGTS:1 RNG:100</small>
                     </button>
                 </div>
                 <div id="tier-2-units" class="tier-section locked">
                     <h4>Tier 2 (Unlocks Round 6)</h4>
                     <button class="buy-btn" data-unit="melee2" disabled>
                         Melee (30g)<br>
-                        <small>HP:200 DMG:35 RNG:40 SPD:135</small>
+                        <small>HP:800 DMG:35 RNG:40 SPD:135</small>
                     </button>
                     <button class="buy-btn" data-unit="ranged2" disabled>
                         Ranged (40g)<br>
-                        <small>HP:120 DMG:56 RNG:150 SPD:120</small>
+                        <small>HP:120 DMG:168 RNG:150 SPD:120</small>
                     </button>
                     <button class="buy-btn" data-unit="caster2" disabled>
                         Caster (50g)<br>
-                        <small>HP:100 DMG:60 RNG:170 AOE:50</small>
+                        <small>HP:100 DMG:120 RNG:170 AOE:50</small>
+                    </button>
+                    <button class="buy-btn" data-unit="healer2" disabled>
+                        Healer (45g)<br>
+                        <small>HP:150 HEAL:80 TGTS:3 RNG:120</small>
                     </button>
                 </div>
                 <div id="tier-3-units" class="tier-section locked">
                     <h4>Tier 3 (Unlocks Round 12)</h4>
                     <button class="buy-btn" data-unit="melee3" disabled>
                         Melee (80g)<br>
-                        <small>HP:400 DMG:70 RNG:45 SPD:150</small>
+                        <small>HP:1600 DMG:70 RNG:45 SPD:150</small>
                     </button>
                     <button class="buy-btn" data-unit="ranged3" disabled>
                         Ranged (100g)<br>
-                        <small>HP:250 DMG:112 RNG:180 SPD:135</small>
+                        <small>HP:250 DMG:336 RNG:180 SPD:135</small>
                     </button>
                     <button class="buy-btn" data-unit="caster3" disabled>
                         Caster (120g)<br>
-                        <small>HP:200 DMG:100 RNG:200 AOE:60</small>
+                        <small>HP:200 DMG:200 RNG:200 AOE:60</small>
+                    </button>
+                    <button class="buy-btn" data-unit="healer3" disabled>
+                        Healer (90g)<br>
+                        <small>HP:300 HEAL:120 TGTS:6 RNG:150</small>
                     </button>
                 </div>
             </div>
@@ -92,14 +104,40 @@
     </div>
 
     <!-- Load scripts in dependency order -->
+    <!-- Config and data -->
     <script src="js/config/gameConfig.js"></script>
     <script src="js/config/unitDefinitions.js"></script>
+    
+    <!-- Utilities -->
+    <script src="js/utils/MathUtils.js"></script>
+    
+    <!-- Core systems -->
+    <script src="js/systems/BattleContext.js"></script>
+    <script src="js/systems/MovementSystem.js"></script>
+    <script src="js/systems/ProjectileSystem.js"></script>
+    <script src="js/systems/CombatSystem.js"></script>
+    <script src="js/systems/StatsManager.js"></script>
+    
+    <!-- Behavior system -->
+    <script src="js/systems/behaviors/UnitBehavior.js"></script>
+    <script src="js/systems/behaviors/MeleeBehavior.js"></script>
+    <script src="js/systems/behaviors/RangedBehavior.js"></script>
+    <script src="js/systems/behaviors/CasterBehavior.js"></script>
+    <script src="js/systems/behaviors/HealerBehavior.js"></script>
+    
+    <!-- AI strategies -->
+    <script src="js/systems/ai/AIStrategy.js"></script>
+    <script src="js/systems/ai/RandomAIStrategy.js"></script>
+    <script src="js/systems/ai/BalancedAIStrategy.js"></script>
+    <script src="js/systems/ai/AggressiveAIStrategy.js"></script>
+    
+    <!-- Game systems -->
     <script src="js/classes/Unit.js"></script>
     <script src="js/ui/rendering.js"></script>
     <script src="js/systems/economy.js"></script>
     <script src="js/systems/spawning.js"></script>
     <script src="js/systems/ai.js"></script>
-    <script src="js/systems/battle.js"></script>
+    <script src="js/systems/BattleSystem.js"></script>
     <script src="js/ui/uiManager.js"></script>
     <script src="js/main.js"></script>
 </body>

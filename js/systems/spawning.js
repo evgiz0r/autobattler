@@ -79,9 +79,9 @@ function startRound() {
         }
     }
     
-    // Increase AI difficulty by 10% every 3 rounds
-    if (gameState.round % 3 === 0) {
-        GAME_CONFIG.AI_GOLD_MULTIPLIER += 0.1;
+    // Increase AI difficulty by 5% every 5 rounds
+    if (gameState.round % 5 === 0) {
+        GAME_CONFIG.AI_GOLD_MULTIPLIER += 0.05;
         console.log('AI difficulty increased! Now ' + Math.round(GAME_CONFIG.AI_GOLD_MULTIPLIER * 100) + '% gold income (Round ' + gameState.round + ')');
     }
     

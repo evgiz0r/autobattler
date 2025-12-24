@@ -6,6 +6,9 @@ function init() {
     DOM.battleZone = document.getElementById('battle-zone');
     DOM.aiZone = document.getElementById('ai-zone');
     
+    // Initialize game (AI strategy, etc.)
+    initializeGame();
+    
     // Setup event listeners
     setupEventListeners();
     
@@ -28,8 +31,8 @@ function gameLoop(timestamp) {
         // Update economy
         updatePassiveGold(deltaTime);
         
-        // Update battle
-        updateBattle(deltaTime, timestamp);
+        // Update battle (new modular system)
+        BattleSystem.update(deltaTime, timestamp);
         
         // Clean up dead units
         cleanupDeadUnits();
@@ -38,10 +41,10 @@ function gameLoop(timestamp) {
         cleanupExpiredUnits();
         
         // Clean up old projectiles
-        cleanupOldProjectiles(timestamp);
+        ProjectileSystem.cleanupOldProjectiles(timestamp);
         
-        // AI buying
-        if (Math.random() < GAME_CONFIG.AI_BUY_CHANCE) {
+        // AI buying (using strategy pattern)
+        if (Math.random() < gameState.aiStrategy.getPurchaseChance()) {
             aiPurchaseUnits();
         }
         
@@ -88,14 +91,7 @@ function cleanupExpiredUnits() {
 }
 
 function cleanupOldProjectiles(timestamp) {
-    gameState.projectiles = gameState.projectiles.filter(proj => {
-        if (!proj.createdAt) proj.createdAt = timestamp;
-        if (timestamp - proj.createdAt > GAME_CONFIG.PROJECTILE_MAX_AGE) {
-            if (proj.element) proj.element.remove();
-            return false;
-        }
-        return true;
-    });
+    ProjectileSystem.cleanupOldProjectiles(timestamp);
 }
 
 // Start the game when page loads
