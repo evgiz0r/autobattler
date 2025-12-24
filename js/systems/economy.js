@@ -12,7 +12,8 @@ function updatePassiveGold(deltaTime) {
         const aiTierBonus = gameState.ai.unlockedTiers.length - 1;
         
         gameState.player.gold += baseGold + economyBonus + tierBonus;
-        gameState.ai.gold += Math.round((baseGold + aiTierBonus) * GAME_CONFIG.AI_GOLD_MULTIPLIER);
+        const difficultyMultiplier = (GAME_CONFIG.DIFFICULTY[gameState.difficulty] || GAME_CONFIG.DIFFICULTY.MEDIUM).multiplier;
+        gameState.ai.gold += Math.round((baseGold + aiTierBonus) * difficultyMultiplier);
         gameState.passiveGoldTimer = 0;
     }
 }
@@ -22,14 +23,16 @@ function awardKillGold(tier, owner) {
     if (owner === 'player') {
         gameState.player.gold += goldAmount;
     } else {
-        gameState.ai.gold += Math.round(goldAmount * GAME_CONFIG.AI_GOLD_MULTIPLIER);
+        const difficultyMultiplier = (GAME_CONFIG.DIFFICULTY[gameState.difficulty] || GAME_CONFIG.DIFFICULTY.MEDIUM).multiplier;
+        gameState.ai.gold += Math.round(goldAmount * difficultyMultiplier);
     }
 }
 
 function awardRoundGold() {
     const goldAmount = GAME_CONFIG.ROUND_GOLD_BASE + (gameState.round * GAME_CONFIG.ROUND_GOLD_PER_ROUND);
     gameState.player.gold += goldAmount;
-    gameState.ai.gold += Math.round(goldAmount * GAME_CONFIG.AI_GOLD_MULTIPLIER);
+    const difficultyMultiplier = (GAME_CONFIG.DIFFICULTY[gameState.difficulty] || GAME_CONFIG.DIFFICULTY.MEDIUM).multiplier;
+    gameState.ai.gold += Math.round(goldAmount * difficultyMultiplier);
 }
 
 function checkAutoUnlockTiers() {

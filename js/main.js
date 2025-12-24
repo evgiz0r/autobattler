@@ -48,6 +48,11 @@ function gameLoop(timestamp) {
             aiPurchaseUnits();
         }
         
+        // Player AI buying in AI vs AI mode
+        if (gameState.isAIvsAI && gameState.firstUnitPlaced && Math.random() < gameState.aiStrategy.getPurchaseChance()) {
+            playerAIPurchaseUnits();
+        }
+        
         // Round timer - only runs after first unit is placed
         if (gameState.firstUnitPlaced) {
             gameState.roundTimer -= deltaTime / 1000;

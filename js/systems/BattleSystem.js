@@ -97,9 +97,27 @@ const BattleSystem = {
     // Check if game is over
     checkGameOver() {
         if (gameState.player.health <= 0 || gameState.ai.health <= 0) {
-            const winner = gameState.player.health > 0 ? 'Player' : 'AI';
-            alert(`${winner} Wins!`);
-            location.reload();
+            if (!gameState.isPaused) {
+                const winner = gameState.player.health > 0 ? 'Player' : 'AI';
+                gameState.isPaused = true;
+                document.getElementById('pause-btn').textContent = 'Resume';
+                
+                // Show game over message
+                const messageDiv = document.getElementById('first-unit-message');
+                messageDiv.textContent = `Game Over - ${winner} Wins!`;
+                messageDiv.style.display = 'block';
+                messageDiv.style.fontSize = '18px';
+                messageDiv.style.padding = '12px 24px';
+                messageDiv.style.top = '50%';
+                messageDiv.style.left = '50%';
+                messageDiv.style.transform = 'translate(-50%, -50%)';
+                
+                // Track pause time for all units
+                const now = Date.now();
+                gameState.units.forEach(unit => {
+                    unit.lastPauseStart = now;
+                });
+            }
         }
     }
 };

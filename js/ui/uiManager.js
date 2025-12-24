@@ -21,13 +21,14 @@ function updateUI() {
     document.getElementById('player-gold').textContent = `${gameState.player.gold} (+${totalBonus}/s)`;
     
     const aiTierBonus = gameState.ai.unlockedTiers.length - 1;
-    const aiTotalBonus = Math.round((1 + aiTierBonus) * GAME_CONFIG.AI_GOLD_MULTIPLIER * 10) / 10;
+    const difficultyMultiplier = (GAME_CONFIG.DIFFICULTY[gameState.difficulty] || GAME_CONFIG.DIFFICULTY.MEDIUM).multiplier;
+    const aiTotalBonus = Math.round((1 + aiTierBonus) * difficultyMultiplier * 10) / 10;
     
     document.getElementById('ai-health').textContent = gameState.ai.health;
     document.getElementById('ai-gold').textContent = `${gameState.ai.gold} (+${aiTotalBonus}/s)`;
     document.getElementById('round-number').textContent = gameState.round;
     document.getElementById('round-timer').textContent = Math.ceil(gameState.roundTimer);
-    document.getElementById('ai-boost').textContent = Math.round(GAME_CONFIG.AI_GOLD_MULTIPLIER * 100);
+    document.getElementById('ai-boost').textContent = Math.round(difficultyMultiplier * 100);
     
     // Update affordability indicators
     document.querySelectorAll('.buy-btn').forEach(btn => {
@@ -150,6 +151,34 @@ function setupEventListeners() {
         }
     });
     
+    // Page Visibility API - pause when tab is hidden
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden && !gameState.isPaused) {
+            // Tab hidden - pause the game
+            const now = Date.now();
+            gameState.isPaused = true;
+            document.getElementById('pause-btn').textContent = 'Resume';
+            
+            // Mark pause start time for all units
+            gameState.units.forEach(unit => {
+                unit.lastPauseStart = now;
+            });
+        } else if (!document.hidden && gameState.isPaused) {
+            // Tab visible again - unpause the game
+            const now = Date.now();
+            gameState.isPaused = false;
+            document.getElementById('pause-btn').textContent = 'Pause';
+            
+            // Add elapsed pause time to all units
+            gameState.units.forEach(unit => {
+                if (unit.lastPauseStart) {
+                    unit.pausedTime += now - unit.lastPauseStart;
+                    unit.lastPauseStart = null;
+                }
+            });
+        }
+    });
+    
     // Target lines toggle
     document.getElementById('target-lines-btn').addEventListener('click', () => {
         gameState.showTargetLines = !gameState.showTargetLines;
@@ -168,5 +197,46 @@ function setupEventListeners() {
     // Economy upgrade
     document.getElementById('economy-upgrade-btn').addEventListener('click', () => {
         upgradeEconomy();
+    });
+    
+    // Restart button
+    document.getElementById('restart-btn').addEventListener('click', () => {
+        location.reload();
+    });
+    
+    // AI vs AI mode toggle
+    document.getElementById('ai-vs-ai-btn').addEventListener('click', () => {
+        gameState.isAIvsAI = !gameState.isAIvsAI;
+        const btn = document.getElementById('ai-vs-ai-btn');
+        
+        if (gameState.isAIvsAI) {
+            btn.style.background = '#2ecc71';
+            btn.textContent = 'AI vs AI: ON';
+            
+            // Start the game if not started
+            if (!gameState.firstUnitPlaced) {
+                gameState.firstUnitPlaced = true;
+                const messageDiv = document.getElementById('first-unit-message');
+                messageDiv.style.display = 'none';
+            }
+        } else {
+            btn.style.background = '';
+            btn.textContent = 'AI vs AI';
+        }
+    });
+    
+    // Difficulty selector
+    document.querySelectorAll('.difficulty-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            // Update difficulty
+            gameState.difficulty = btn.dataset.difficulty;
+            
+            // Update active button styling
+            document.querySelectorAll('.difficulty-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            // Update AI boost display
+            updateUI();
+        });
     });
 }

@@ -21,7 +21,11 @@ const GAME_CONFIG = {
     PROJECTILE_SPEED: 200,
     PROJECTILE_MAX_AGE: 5000, // ms
     BASE_DAMAGE_TO_CORE: 5,
-    AI_GOLD_MULTIPLIER: 1.1 // AI gets 10% more gold
+    DIFFICULTY: {
+        EASY: { name: 'Easy', multiplier: 0.8 },
+        MEDIUM: { name: 'Medium', multiplier: 1.0 },
+        HARD: { name: 'Hard', multiplier: 1.2 }
+    }
 };
 
 // Game state initialization
@@ -49,7 +53,9 @@ const gameState = {
     showTargetLines: true,
     cursorPreview: null,
     firstUnitPlaced: false,
-    aiStrategy: null // Will be initialized in init()
+    aiStrategy: null, // Will be initialized in init()
+    difficulty: 'MEDIUM', // Current difficulty: 'EASY', 'MEDIUM', or 'HARD'
+    isAIvsAI: false // AI vs AI mode
 };
 
 // DOM element references

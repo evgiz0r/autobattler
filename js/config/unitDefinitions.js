@@ -7,10 +7,10 @@ const UNIT_DEFINITIONS = {
         cost: 15,
         hp: 400,
         maxHp: 400,
-        damage: 15,
+        damage: 7.5,
         attackRange: 35,
         attackCooldown: 1000,
-        speed: 120
+        speed: 96
     },
     ranged1: {
         name: 'Ranged T1',
@@ -19,10 +19,10 @@ const UNIT_DEFINITIONS = {
         cost: 15,
         hp: 60,
         maxHp: 60,
-        damage: 84,
+        damage: 42,
         attackRange: 120,
         attackCooldown: 1500,
-        speed: 105
+        speed: 84
     },
     caster1: {
         name: 'Caster T1',
@@ -31,10 +31,10 @@ const UNIT_DEFINITIONS = {
         cost: 20,
         hp: 50,
         maxHp: 50,
-        damage: 70,
+        damage: 35,
         attackRange: 140,
         attackCooldown: 2000,
-        speed: 82,
+        speed: 66,
         aoeRadius: 40
     },
     healer1: {
@@ -45,11 +45,11 @@ const UNIT_DEFINITIONS = {
         hp: 80,
         maxHp: 80,
         damage: 0,
-        healAmount: 35,
+        healAmount: 12,
         maxTargets: 1,
         attackRange: 100,
         attackCooldown: 2500,
-        speed: 90,
+        speed: 72,
         aoeRadius: 0
     },
     melee2: {
@@ -59,10 +59,10 @@ const UNIT_DEFINITIONS = {
         cost: 30,
         hp: 800,
         maxHp: 800,
-        damage: 35,
+        damage: 17.5,
         attackRange: 40,
         attackCooldown: 900,
-        speed: 135
+        speed: 108
     },
     ranged2: {
         name: 'Ranged T2',
@@ -71,10 +71,10 @@ const UNIT_DEFINITIONS = {
         cost: 40,
         hp: 120,
         maxHp: 120,
-        damage: 168,
+        damage: 84,
         attackRange: 150,
         attackCooldown: 1300,
-        speed: 120
+        speed: 96
     },
     caster2: {
         name: 'Caster T2',
@@ -83,10 +83,10 @@ const UNIT_DEFINITIONS = {
         cost: 50,
         hp: 100,
         maxHp: 100,
-        damage: 120,
+        damage: 60,
         attackRange: 170,
         attackCooldown: 1800,
-        speed: 105,
+        speed: 84,
         aoeRadius: 50
     },
     healer2: {
@@ -97,11 +97,11 @@ const UNIT_DEFINITIONS = {
         hp: 150,
         maxHp: 150,
         damage: 0,
-        healAmount: 55,
+        healAmount: 18,
         maxTargets: 3,
         attackRange: 120,
         attackCooldown: 2200,
-        speed: 100,
+        speed: 80,
         aoeRadius: 0
     },
     melee3: {
@@ -111,10 +111,10 @@ const UNIT_DEFINITIONS = {
         cost: 80,
         hp: 1600,
         maxHp: 1600,
-        damage: 70,
+        damage: 35,
         attackRange: 45,
         attackCooldown: 800,
-        speed: 150
+        speed: 120
     },
     ranged3: {
         name: 'Ranged T3',
@@ -123,10 +123,10 @@ const UNIT_DEFINITIONS = {
         cost: 100,
         hp: 250,
         maxHp: 250,
-        damage: 336,
+        damage: 168,
         attackRange: 180,
         attackCooldown: 1100,
-        speed: 135
+        speed: 108
     },
     caster3: {
         name: 'Caster T3',
@@ -135,10 +135,10 @@ const UNIT_DEFINITIONS = {
         cost: 120,
         hp: 200,
         maxHp: 200,
-        damage: 200,
+        damage: 100,
         attackRange: 200,
         attackCooldown: 1600,
-        speed: 120,
+        speed: 96,
         aoeRadius: 60
     },
     healer3: {
@@ -149,11 +149,11 @@ const UNIT_DEFINITIONS = {
         hp: 300,
         maxHp: 300,
         damage: 0,
-        healAmount: 85,
+        healAmount: 28,
         maxTargets: 6,
         attackRange: 150,
         attackCooldown: 2000,
-        speed: 110,
+        speed: 88,
         aoeRadius: 0
     },
     // Tier 4 - Small exponential growth (~1.6x)
@@ -164,10 +164,10 @@ const UNIT_DEFINITIONS = {
         cost: 150,
         hp: 2600,
         maxHp: 2600,
-        damage: 115,
+        damage: 57.5,
         attackRange: 50,
         attackCooldown: 750,
-        speed: 165
+        speed: 132
     },
     ranged4: {
         name: 'Ranged T4',
@@ -176,10 +176,10 @@ const UNIT_DEFINITIONS = {
         cost: 180,
         hp: 420,
         maxHp: 420,
-        damage: 540,
+        damage: 270,
         attackRange: 200,
         attackCooldown: 1000,
-        speed: 150
+        speed: 120
     },
     caster4: {
         name: 'Caster T4',
@@ -188,10 +188,10 @@ const UNIT_DEFINITIONS = {
         cost: 210,
         hp: 340,
         maxHp: 340,
-        damage: 330,
+        damage: 165,
         attackRange: 220,
         attackCooldown: 1500,
-        speed: 135,
+        speed: 108,
         aoeRadius: 70
     },
     healer4: {
@@ -202,11 +202,11 @@ const UNIT_DEFINITIONS = {
         hp: 500,
         maxHp: 500,
         damage: 0,
-        healAmount: 140,
+        healAmount: 47,
         maxTargets: 8,
         attackRange: 170,
         attackCooldown: 1900,
-        speed: 125,
+        speed: 100,
         aoeRadius: 0
     },
     // Tier 5 - Small exponential growth (~1.6x)
@@ -217,10 +217,10 @@ const UNIT_DEFINITIONS = {
         cost: 280,
         hp: 4200,
         maxHp: 4200,
-        damage: 185,
+        damage: 92.5,
         attackRange: 55,
         attackCooldown: 700,
-        speed: 180
+        speed: 144
     },
     ranged5: {
         name: 'Ranged T5',
@@ -229,10 +229,10 @@ const UNIT_DEFINITIONS = {
         cost: 320,
         hp: 700,
         maxHp: 700,
-        damage: 870,
+        damage: 435,
         attackRange: 220,
         attackCooldown: 950,
-        speed: 165
+        speed: 132
     },
     caster5: {
         name: 'Caster T5',
@@ -241,10 +241,10 @@ const UNIT_DEFINITIONS = {
         cost: 370,
         hp: 560,
         maxHp: 560,
-        damage: 530,
+        damage: 265,
         attackRange: 240,
         attackCooldown: 1400,
-        speed: 150,
+        speed: 120,
         aoeRadius: 80
     },
     healer5: {
@@ -255,11 +255,11 @@ const UNIT_DEFINITIONS = {
         hp: 820,
         maxHp: 820,
         damage: 0,
-        healAmount: 230,
+        healAmount: 77,
         maxTargets: 10,
         attackRange: 190,
         attackCooldown: 1800,
-        speed: 140,
+        speed: 112,
         aoeRadius: 0
     },
     // Tier 6 - Small exponential growth (~1.6x)
@@ -270,10 +270,10 @@ const UNIT_DEFINITIONS = {
         cost: 500,
         hp: 6800,
         maxHp: 6800,
-        damage: 300,
+        damage: 150,
         attackRange: 60,
         attackCooldown: 650,
-        speed: 195
+        speed: 156
     },
     ranged6: {
         name: 'Ranged T6',
@@ -282,10 +282,10 @@ const UNIT_DEFINITIONS = {
         cost: 560,
         hp: 1150,
         maxHp: 1150,
-        damage: 1400,
+        damage: 700,
         attackRange: 240,
         attackCooldown: 900,
-        speed: 180
+        speed: 144
     },
     caster6: {
         name: 'Caster T6',
@@ -294,10 +294,10 @@ const UNIT_DEFINITIONS = {
         cost: 640,
         hp: 920,
         maxHp: 920,
-        damage: 850,
+        damage: 425,
         attackRange: 260,
         attackCooldown: 1300,
-        speed: 165,
+        speed: 132,
         aoeRadius: 90
     },
     healer6: {
@@ -308,11 +308,11 @@ const UNIT_DEFINITIONS = {
         hp: 1350,
         maxHp: 1350,
         damage: 0,
-        healAmount: 380,
+        healAmount: 127,
         maxTargets: 12,
         attackRange: 210,
         attackCooldown: 1700,
-        speed: 155,
+        speed: 124,
         aoeRadius: 0
     },
     // Tier 7 - Small exponential growth (~1.6x)
@@ -323,10 +323,10 @@ const UNIT_DEFINITIONS = {
         cost: 900,
         hp: 11000,
         maxHp: 11000,
-        damage: 480,
+        damage: 240,
         attackRange: 65,
         attackCooldown: 600,
-        speed: 210
+        speed: 168
     },
     ranged7: {
         name: 'Ranged T7',
@@ -335,10 +335,10 @@ const UNIT_DEFINITIONS = {
         cost: 1000,
         hp: 1900,
         maxHp: 1900,
-        damage: 2250,
+        damage: 1125,
         attackRange: 260,
         attackCooldown: 850,
-        speed: 195
+        speed: 156
     },
     caster7: {
         name: 'Caster T7',
@@ -347,10 +347,10 @@ const UNIT_DEFINITIONS = {
         cost: 1100,
         hp: 1500,
         maxHp: 1500,
-        damage: 1360,
+        damage: 680,
         attackRange: 280,
         attackCooldown: 1200,
-        speed: 180,
+        speed: 144,
         aoeRadius: 100
     },
     healer7: {
@@ -361,11 +361,11 @@ const UNIT_DEFINITIONS = {
         hp: 2200,
         maxHp: 2200,
         damage: 0,
-        healAmount: 610,
+        healAmount: 203,
         maxTargets: 15,
         attackRange: 230,
         attackCooldown: 1600,
-        speed: 170,
+        speed: 136,
         aoeRadius: 0
     }
 };

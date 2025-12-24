@@ -69,3 +69,74 @@ function getAIUnitPosition(unitType, existingUnits) {
     
     return { xPos: null, yPos: null };
 }
+
+function playerAIPurchaseUnits() {
+    // AI purchasing for player side in AI vs AI mode
+    const playerTemplateUnits = gameState.units.filter(u => 
+        u.element && u.element.parentElement === DOM.playerZone
+    );
+    
+    if (playerTemplateUnits.length >= GAME_CONFIG.MAX_UNITS_PER_ZONE) return;
+    
+    // Use AI strategy to select unit
+    const strategy = gameState.aiStrategy;
+    
+    // Select unit to purchase
+    const definition = strategy.selectUnits(gameState.player.gold, gameState.player.unlockedTiers);
+    
+    if (!definition) return;
+    
+    // Determine position based on unit type (mirrored for left side)
+    const { xPos, yPos } = getPlayerAIUnitPosition(definition.type, playerTemplateUnits);
+    
+    if (xPos === null || yPos === null) return;
+    
+    // Purchase and place unit
+    gameState.player.gold -= definition.cost;
+    const playerUnit = new Unit(definition, 'player', xPos, yPos);
+    gameState.units.push(playerUnit);
+    createUnitElement(playerUnit, DOM.playerZone);
+}
+
+function getPlayerAIUnitPosition(unitType, existingUnits) {
+    // Determine position based on unit type (mirrored from right side)
+    let xMin, xMax;
+    const width = DOM.playerZone.offsetWidth;
+    
+    // Mirror the positioning: melee on right, casters on left
+    if (unitType === 'melee') {
+        xMin = width * 0.66;
+        xMax = width - 25;
+    } else if (unitType === 'ranged') {
+        xMin = width * 0.33;
+        xMax = width * 0.66;
+    } else {
+        xMin = 25;
+        xMax = width * 0.33;
+    }
+    
+    // Try to find a valid position
+    for (let attempt = 0; attempt < 30; attempt++) {
+        const xPos = Math.random() * (xMax - xMin) + xMin;
+        const yPos = Math.random() * (DOM.playerZone.offsetHeight - 50) + 25;
+        
+        // Check collision
+        let hasCollision = false;
+        for (let existing of existingUnits) {
+            const dist = Math.sqrt(
+                Math.pow(existing.x - xPos, 2) + 
+                Math.pow(existing.y - yPos, 2)
+            );
+            if (dist < GAME_CONFIG.MIN_UNIT_DISTANCE) {
+                hasCollision = true;
+                break;
+            }
+        }
+        
+        if (!hasCollision) {
+            return { xPos, yPos };
+        }
+    }
+    
+    return { xPos: null, yPos: null };
+}
