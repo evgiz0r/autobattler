@@ -46,6 +46,10 @@ body {
     gap: 5px;
 }
 
+.zone-container:has(#battle-zone) {
+    flex: 1;
+}
+
 .zone {
     background: #34495e;
     border: 2px solid #7f8c8d;
