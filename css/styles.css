@@ -46,10 +46,6 @@ body {
     gap: 5px;
 }
 
-.zone-container:has(#battle-zone) {
-    flex: 1;
-}
-
 .zone {
     background: #34495e;
     border: 2px solid #7f8c8d;
@@ -66,7 +62,7 @@ body {
 }
 
 #battle-zone {
-    flex: 1;
+    width: 600px;
     border-color: #e74c3c;
 }
 
@@ -83,8 +79,8 @@ body {
 
 .gold-and-economy {
     display: flex;
-    gap: 8px;
-    align-items: center;
+    flex-direction: column;
+    gap: 5px;
 }
 
 .zone-gold {
@@ -101,10 +97,11 @@ body {
 
 .economy-btn {
     background: #f39c12 !important;
-    padding: 8px 12px !important;
-    font-size: 13px !important;
+    padding: 6px 10px !important;
+    font-size: 12px !important;
     white-space: nowrap;
     margin: 0 !important;
+    width: 100%;
 }
 
 .economy-btn:hover:not(:disabled) {
