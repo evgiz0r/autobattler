@@ -46,7 +46,7 @@ const gameState = {
     selectedUnitType: null,
     passiveGoldTimer: 0,
     isPaused: false,
-    showTargetLines: false,
+    showTargetLines: true,
     cursorPreview: null,
     firstUnitPlaced: false,
     aiStrategy: null // Will be initialized in init()

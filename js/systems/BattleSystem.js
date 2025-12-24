@@ -62,7 +62,7 @@ const BattleSystem = {
     drawTargetLine(unit) {
         if (!unit.targetLine) {
             unit.targetLine = document.createElement('div');
-            unit.targetLine.className = 'target-line';
+            unit.targetLine.className = `target-line ${unit.owner}`;
             DOM.battleZone.appendChild(unit.targetLine);
         }
         
