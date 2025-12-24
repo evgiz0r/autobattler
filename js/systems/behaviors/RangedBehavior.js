@@ -20,7 +20,8 @@ class RangedBehavior extends UnitBehavior {
         const distance = MathUtils.distance2D(this.unit, this.unit.target);
         
         if (distance > this.unit.attackRange) {
-            MovementSystem.moveHorizontally(this.unit, deltaTime, battleContext.battleWidth, this.unit.target);
+            // Move towards target in 2D to get within range
+            MovementSystem.moveTowardsTarget(this.unit, this.unit.target, deltaTime, battleContext.battleWidth);
         } else {
             CombatSystem.performRangedAttack(this.unit, this.unit.target, currentTime);
         }
