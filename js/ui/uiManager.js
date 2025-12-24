@@ -6,6 +6,9 @@ function initializeGame() {
     // Alternative strategies:
     // gameState.aiStrategy = new RandomAIStrategy();
     // gameState.aiStrategy = new AggressiveAIStrategy();
+    
+    // Generate shop UI dynamically
+    ShopManager.generateShop();
 }
 
 function updateUI() {
@@ -57,21 +60,17 @@ function selectUnitForPlacement(unitType) {
 }
 
 function setupEventListeners() {
-    // Unit purchase buttons
-    document.querySelectorAll('.buy-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const unitType = btn.dataset.unit;
-            selectUnitForPlacement(unitType);
+    // Unit purchase buttons - delegate from unit shop container
+    const unitShop = document.getElementById('unit-shop');
+    if (unitShop) {
+        unitShop.addEventListener('click', (e) => {
+            const buyBtn = e.target.closest('.buy-btn');
+            if (buyBtn) {
+                const unitType = buyBtn.dataset.unit;
+                selectUnitForPlacement(unitType);
+            }
         });
-    });
-    
-    // Tier unlock buttons
-    document.querySelectorAll('.unlock-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const tier = parseInt(btn.dataset.tier);
-            unlockTier(tier);
-        });
-    });
+    }
     
     // Unit placement in player zone
     DOM.playerZone.addEventListener('click', (e) => {

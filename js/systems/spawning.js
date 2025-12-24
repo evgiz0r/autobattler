@@ -46,44 +46,8 @@ function startRound() {
     gameState.isRoundActive = true;
     gameState.round++;
     
-    // Auto-unlock tiers at specific rounds for both player and AI
-    if (gameState.round === 6) {
-        if (!gameState.player.unlockedTiers.includes(2)) {
-            gameState.player.unlockedTiers.push(2);
-            gameState.player.gold += 50; // Bonus gold for tier unlock
-            const tierSection = document.getElementById('tier-2-units');
-            tierSection.classList.remove('locked');
-            tierSection.querySelectorAll('.buy-btn').forEach(btn => btn.disabled = false);
-            console.log('Tier 2 unlocked! +50 bonus gold!');
-        }
-        if (!gameState.ai.unlockedTiers.includes(2)) {
-            gameState.ai.unlockedTiers.push(2);
-            gameState.ai.gold += Math.round(50 * GAME_CONFIG.AI_GOLD_MULTIPLIER); // Bonus gold with AI multiplier
-            console.log('AI Tier 2 unlocked!');
-        }
-    }
-    
-    if (gameState.round === 12) {
-        if (!gameState.player.unlockedTiers.includes(3)) {
-            gameState.player.unlockedTiers.push(3);
-            gameState.player.gold += 100; // Bonus gold for tier unlock
-            const tierSection = document.getElementById('tier-3-units');
-            tierSection.classList.remove('locked');
-            tierSection.querySelectorAll('.buy-btn').forEach(btn => btn.disabled = false);
-            console.log('Tier 3 unlocked! +100 bonus gold!');
-        }
-        if (!gameState.ai.unlockedTiers.includes(3)) {
-            gameState.ai.unlockedTiers.push(3);
-            gameState.ai.gold += Math.round(100 * GAME_CONFIG.AI_GOLD_MULTIPLIER); // Bonus gold with AI multiplier
-            console.log('AI Tier 3 unlocked!');
-        }
-    }
-    
-    // Increase AI difficulty by 5% every 5 rounds
-    if (gameState.round % 5 === 0) {
-        GAME_CONFIG.AI_GOLD_MULTIPLIER += 0.05;
-        console.log('AI difficulty increased! Now ' + Math.round(GAME_CONFIG.AI_GOLD_MULTIPLIER * 100) + '% gold income (Round ' + gameState.round + ')');
-    }
+    // Check for auto-unlocking tiers
+    checkAutoUnlockTiers();
     
     // Clone template units from build zones to battle zone
     const templateUnits = gameState.units.filter(u => 

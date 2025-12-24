@@ -83,19 +83,78 @@ body {
 }
 
 .tier-section {
-    margin-bottom: 8px;
-    padding: 8px;
-    background: #2c3e50;
-    border-radius: 5px;
+    margin: 10px 0;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    border: 2px solid #34495e;
 }
 
 .tier-section.locked {
-    opacity: 0.6;
+    opacity: 0.5;
+    border-color: #7f8c8d;
 }
 
-.tier-section h4 {
-    margin-bottom: 6px;
+.tier-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.tier-header h4 {
+    margin: 0;
+    color: #ecf0f1;
+}
+
+.tier-countdown {
+    color: #e67e22;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.units-container {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+}
+
+.buy-btn {
+    flex: 0 0 auto;
+    min-width: 120px;
+    padding: 8px;
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+    border: 2px solid #34495e;
+    border-radius: 6px;
+    color: #ecf0f1;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.buy-btn .unit-name {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.buy-btn .unit-stats {
+    font-size: 10px;
     color: #95a5a6;
+}
+
+.buy-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%);
+    border-color: #3498db;
+    transform: translateY(-2px);
+}
+
+.buy-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
 button {
@@ -116,15 +175,6 @@ button:hover:not(:disabled) {
 button:disabled {
     background: #7f8c8d;
     cursor: not-allowed;
-}
-
-.unlock-btn {
-    background: #27ae60;
-    margin-top: 6px;
-}
-
-.unlock-btn:hover:not(:disabled) {
-    background: #229954;
 }
 
 /* Unit styling */

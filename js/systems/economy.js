@@ -29,41 +29,24 @@ function awardRoundGold() {
     gameState.ai.gold += Math.round(goldAmount * GAME_CONFIG.AI_GOLD_MULTIPLIER);
 }
 
-function unlockTier(tier) {
-    const costs = {
-        2: GAME_CONFIG.TIER_2_UNLOCK_COST,
-        3: GAME_CONFIG.TIER_3_UNLOCK_COST,
-        4: GAME_CONFIG.TIER_4_UNLOCK_COST,
-        5: GAME_CONFIG.TIER_5_UNLOCK_COST,
-        6: GAME_CONFIG.TIER_6_UNLOCK_COST,
-        7: GAME_CONFIG.TIER_7_UNLOCK_COST
-    };
-    
-    const cost = costs[tier];
-    
-    if (gameState.player.gold < cost) {
-        console.log('Not enough gold');
-        return;
+function checkAutoUnlockTiers() {
+    // Auto-unlock tiers based on rounds: Tier 2 at round 5, Tier 3 at round 10, etc.
+    for (let tier = 2; tier <= 7; tier++) {
+        const unlockRound = (tier - 1) * 5;
+        
+        if (gameState.round >= unlockRound && !gameState.player.unlockedTiers.includes(tier)) {
+            gameState.player.unlockedTiers.push(tier);
+            ShopManager.unlockTier(tier);
+            console.log(`Tier ${tier} unlocked at round ${gameState.round}!`);
+        }
+        
+        if (gameState.round >= unlockRound && !gameState.ai.unlockedTiers.includes(tier)) {
+            gameState.ai.unlockedTiers.push(tier);
+        }
     }
     
-    if (gameState.player.unlockedTiers.includes(tier)) {
-        console.log('Already unlocked');
-        return;
-    }
-    
-    gameState.player.gold -= cost;
-    gameState.player.unlockedTiers.push(tier);
-    
-    // Update UI
-    const tierSection = document.getElementById(`tier-${tier}-units`);
-    if (tierSection) {
-        tierSection.classList.remove('locked');
-        tierSection.querySelectorAll('.buy-btn').forEach(btn => btn.disabled = false);
-        const unlockBtn = tierSection.querySelector('.unlock-btn');
-        if (unlockBtn) unlockBtn.style.display = 'none';
-    }
-    
-    updateUI();
+    // Update countdown displays
+    ShopManager.updateCountdowns();
 }
 
 function upgradeEconomy() {
