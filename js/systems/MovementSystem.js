@@ -20,19 +20,12 @@ const MovementSystem = {
     
     // Move unit horizontally towards target (maintains lane)
     moveHorizontally(unit, deltaTime, battleWidth, target = null) {
-        let targetX = target ? target.x : null;
         let newX = unit.x;
         
         if (unit.owner === 'player') {
             newX = unit.x + unit.speed * (deltaTime / 1000);
-            if (targetX !== null && newX > targetX - unit.attackRange * 0.8) {
-                newX = Math.max(unit.x, targetX - unit.attackRange * 0.8);
-            }
         } else {
             newX = unit.x - unit.speed * (deltaTime / 1000);
-            if (targetX !== null && newX < targetX + unit.attackRange * 0.8) {
-                newX = Math.min(unit.x, targetX + unit.attackRange * 0.8);
-            }
         }
         
         if (!this.checkCollision(newX, unit.y, unit)) {
