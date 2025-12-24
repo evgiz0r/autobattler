@@ -4,9 +4,12 @@ function updatePassiveGold(deltaTime) {
     gameState.passiveGoldTimer += deltaTime;
     if (gameState.passiveGoldTimer >= GAME_CONFIG.PASSIVE_GOLD_INTERVAL) {
         const baseGold = GAME_CONFIG.PASSIVE_GOLD_AMOUNT;
-        const bonusGold = gameState.player.economyLevel || 0;
-        gameState.player.gold += baseGold + bonusGold;
-        gameState.ai.gold += Math.round(baseGold * GAME_CONFIG.AI_GOLD_MULTIPLIER);
+        const economyBonus = gameState.player.economyLevel || 0;
+        const tierBonus = gameState.player.unlockedTiers.length - 1; // +1 per tier unlocked (tier 1 is free)
+        const aiTierBonus = gameState.ai.unlockedTiers.length - 1;
+        
+        gameState.player.gold += baseGold + economyBonus + tierBonus;
+        gameState.ai.gold += Math.round((baseGold + aiTierBonus) * GAME_CONFIG.AI_GOLD_MULTIPLIER);
         gameState.passiveGoldTimer = 0;
     }
 }
@@ -27,7 +30,16 @@ function awardRoundGold() {
 }
 
 function unlockTier(tier) {
-    const cost = tier === 2 ? GAME_CONFIG.TIER_2_UNLOCK_COST : GAME_CONFIG.TIER_3_UNLOCK_COST;
+    const costs = {
+        2: GAME_CONFIG.TIER_2_UNLOCK_COST,
+        3: GAME_CONFIG.TIER_3_UNLOCK_COST,
+        4: GAME_CONFIG.TIER_4_UNLOCK_COST,
+        5: GAME_CONFIG.TIER_5_UNLOCK_COST,
+        6: GAME_CONFIG.TIER_6_UNLOCK_COST,
+        7: GAME_CONFIG.TIER_7_UNLOCK_COST
+    };
+    
+    const cost = costs[tier];
     
     if (gameState.player.gold < cost) {
         console.log('Not enough gold');
@@ -44,41 +56,33 @@ function unlockTier(tier) {
     
     // Update UI
     const tierSection = document.getElementById(`tier-${tier}-units`);
-    tierSection.classList.remove('locked');
-    tierSection.querySelectorAll('.buy-btn').forEach(btn => btn.disabled = false);
-    tierSection.querySelector('.unlock-btn').style.display = 'none';
+    if (tierSection) {
+        tierSection.classList.remove('locked');
+        tierSection.querySelectorAll('.buy-btn').forEach(btn => btn.disabled = false);
+        const unlockBtn = tierSection.querySelector('.unlock-btn');
+        if (unlockBtn) unlockBtn.style.display = 'none';
+    }
     
     updateUI();
 }
 
 function upgradeEconomy() {
     const level = gameState.player.economyLevel || 0;
-    const costs = [50, 100, 150];
+    const baseCost = 50;
+    const upgradeCost = baseCost + (level * 25); // 50, 75, 100, 125, 150, ...
     
-    if (level >= 3) {
-        console.log('Economy maxed out!');
-        return;
-    }
-    
-    const cost = costs[level];
-    
-    if (gameState.player.gold < cost) {
+    if (gameState.player.gold < upgradeCost) {
         console.log('Not enough gold for economy upgrade');
         return;
     }
     
-    gameState.player.gold -= cost;
+    gameState.player.gold -= upgradeCost;
     gameState.player.economyLevel++;
     
     // Update UI button
     const btn = document.getElementById('economy-upgrade-btn');
-    if (gameState.player.economyLevel >= 3) {
-        btn.textContent = 'Economy Maxed';
-        btn.disabled = true;
-    } else {
-        const nextCost = costs[gameState.player.economyLevel];
-        btn.textContent = `Economy +${gameState.player.economyLevel + 1}g/s (${nextCost}g)`;
-    }
+    const nextCost = baseCost + (gameState.player.economyLevel * 25);
+    btn.textContent = `Economy +1g/s (${nextCost}g)`;
     
     console.log(`Economy upgraded! Now +${gameState.player.economyLevel}g/s`);
     updateUI();

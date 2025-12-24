@@ -46,7 +46,8 @@ class BalancedAIStrategy extends AIStrategy {
             }
         }
         
-        // Find highest tier unit of the needed type that we can afford
+        // Find HIGHEST tier unit of the needed type that we can afford
+        // AI dramatically favors higher tiers
         const availableUnits = Object.keys(UNIT_DEFINITIONS).filter(key => {
             const def = UNIT_DEFINITIONS[key];
             return def.type === mostNeeded && 
@@ -55,7 +56,7 @@ class BalancedAIStrategy extends AIStrategy {
         });
         
         if (availableUnits.length === 0) {
-            // Fallback to any unit
+            // Fallback to any highest tier unit
             const anyUnits = Object.keys(UNIT_DEFINITIONS).filter(key => {
                 const def = UNIT_DEFINITIONS[key];
                 return unlockedTiers.includes(def.tier) && def.cost <= availableGold;
@@ -63,11 +64,12 @@ class BalancedAIStrategy extends AIStrategy {
             
             if (anyUnits.length === 0) return null;
             
-            const randomUnit = anyUnits[Math.floor(Math.random() * anyUnits.length)];
-            return UNIT_DEFINITIONS[randomUnit];
+            // Sort by tier (HIGHEST first)
+            anyUnits.sort((a, b) => UNIT_DEFINITIONS[b].tier - UNIT_DEFINITIONS[a].tier);
+            return UNIT_DEFINITIONS[anyUnits[0]];
         }
         
-        // Sort by tier (prefer higher tier)
+        // Sort by tier (HIGHEST first) - AI dramatically prefers higher tiers
         availableUnits.sort((a, b) => UNIT_DEFINITIONS[b].tier - UNIT_DEFINITIONS[a].tier);
         
         return UNIT_DEFINITIONS[availableUnits[0]];
@@ -76,10 +78,13 @@ class BalancedAIStrategy extends AIStrategy {
     shouldUnlockTier(currentGold, tier, unlockedTiers) {
         if (unlockedTiers.includes(tier)) return false;
         
-        const cost = tier === 2 ? 80 : 150;
+        const costs = {
+            2: 80, 3: 150, 4: 250, 5: 400, 6: 650, 7: 1000
+        };
+        const cost = costs[tier];
         
-        // More aggressive unlocking based on difficulty
-        const threshold = this.difficulty === 'hard' ? 1.2 : 1.5;
+        // More aggressive unlocking - AI wants higher tiers
+        const threshold = this.difficulty === 'hard' ? 1.1 : 1.3;
         
         return currentGold >= cost * threshold;
     }

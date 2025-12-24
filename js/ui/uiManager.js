@@ -10,7 +10,13 @@ function initializeGame() {
 
 function updateUI() {
     document.getElementById('player-health').textContent = gameState.player.health;
-    document.getElementById('player-gold').textContent = gameState.player.gold;
+    
+    // Show tier bonus in gold display
+    const tierBonus = gameState.player.unlockedTiers.length - 1;
+    const economyBonus = gameState.player.economyLevel || 0;
+    const totalBonus = 1 + tierBonus + economyBonus; // base 1 + bonuses
+    document.getElementById('player-gold').textContent = `${gameState.player.gold} (+${totalBonus}/s)`;
+    
     document.getElementById('ai-health').textContent = gameState.ai.health;
     document.getElementById('ai-gold').textContent = gameState.ai.gold;
     document.getElementById('round-number').textContent = gameState.round;

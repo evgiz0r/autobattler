@@ -11,10 +11,13 @@ function aiPurchaseUnits() {
     // Use AI strategy to select unit
     const strategy = gameState.aiStrategy;
     
-    // Check if should unlock tier
-    for (let tier = 2; tier <= 3; tier++) {
+    // Check if should unlock tiers (2-7)
+    for (let tier = 2; tier <= 7; tier++) {
         if (strategy.shouldUnlockTier(gameState.ai.gold, tier, gameState.ai.unlockedTiers)) {
-            const cost = tier === 2 ? 80 : 150;
+            const costs = {
+                2: 80, 3: 150, 4: 250, 5: 400, 6: 650, 7: 1000
+            };
+            const cost = costs[tier];
             gameState.ai.gold -= cost;
             gameState.ai.unlockedTiers.push(tier);
         }
