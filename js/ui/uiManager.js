@@ -25,6 +25,19 @@ function updateUI() {
     document.getElementById('round-number').textContent = gameState.round;
     document.getElementById('round-timer').textContent = Math.ceil(gameState.roundTimer);
     document.getElementById('ai-boost').textContent = Math.round(GAME_CONFIG.AI_GOLD_MULTIPLIER * 100);
+    
+    // Update affordability indicators
+    document.querySelectorAll('.buy-btn').forEach(btn => {
+        const unitType = btn.dataset.unit;
+        const definition = UNIT_DEFINITIONS[unitType];
+        if (definition) {
+            if (gameState.player.gold < definition.cost) {
+                btn.classList.add('cannot-afford');
+            } else {
+                btn.classList.remove('cannot-afford');
+            }
+        }
+    });
 }
 
 function selectUnitForPlacement(unitType) {

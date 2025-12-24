@@ -6,12 +6,14 @@ const ShopManager = {
         const shopContainer = document.getElementById('unit-shop');
         if (!shopContainer) return;
         
-        shopContainer.innerHTML = '<h3>Unit Shop</h3>';
+        shopContainer.innerHTML = '<h3>Unit Shop</h3><div id="tiers-container"></div>';
+        
+        const tiersContainer = document.getElementById('tiers-container');
         
         // Create horizontal tier sections
         for (let tier = 1; tier <= 7; tier++) {
             const tierSection = this.createTierSection(tier);
-            shopContainer.appendChild(tierSection);
+            tiersContainer.appendChild(tierSection);
         }
     },
     

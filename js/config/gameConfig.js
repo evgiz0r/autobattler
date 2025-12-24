@@ -48,6 +48,7 @@ const gameState = {
     isPaused: false,
     showTargetLines: false,
     cursorPreview: null,
+    firstUnitPlaced: false,
     aiStrategy: null // Will be initialized in init()
 };
 

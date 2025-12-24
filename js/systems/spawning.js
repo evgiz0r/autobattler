@@ -38,6 +38,15 @@ function placeUnit(unitType, x, y) {
     gameState.units.push(newUnit);
     createUnitElement(newUnit, DOM.playerZone);
     
+    // Mark first unit as placed
+    if (!gameState.firstUnitPlaced) {
+        gameState.firstUnitPlaced = true;
+        const message = document.getElementById('first-unit-message');
+        if (message) {
+            message.style.display = 'none';
+        }
+    }
+    
     // Don't clear selection - keep unit selected for placing more
     updateUI();
 }

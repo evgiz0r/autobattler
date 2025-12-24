@@ -48,11 +48,13 @@ function gameLoop(timestamp) {
             aiPurchaseUnits();
         }
         
-        // Round timer
-        gameState.roundTimer -= deltaTime / 1000;
-        if (gameState.roundTimer <= 0) {
-            endRound();
-            startRound();
+        // Round timer - only runs after first unit is placed
+        if (gameState.firstUnitPlaced) {
+            gameState.roundTimer -= deltaTime / 1000;
+            if (gameState.roundTimer <= 0) {
+                endRound();
+                startRound();
+            }
         }
     }
     

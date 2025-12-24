@@ -82,8 +82,17 @@ body {
     color: #3498db;
 }
 
+#tiers-container {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 5px;
+}
+
 .tier-section {
-    margin: 10px 0;
+    flex: 0 0 auto;
+    min-width: 180px;
     padding: 10px;
     background: rgba(0, 0, 0, 0.3);
     border-radius: 8px;
@@ -93,6 +102,46 @@ body {
 .tier-section.locked {
     opacity: 0.5;
     border-color: #7f8c8d;
+}
+
+#first-unit-message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(52, 152, 219, 0.9);
+    color: white;
+    padding: 20px 40px;
+    border-radius: 10px;
+    font-size: 24px;
+    font-weight: bold;
+    pointer-events: none;
+    z-index: 100;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    animation: pulse-message 2s infinite;
+}
+
+@keyframes pulse-message {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); }
+    50% { transform: translate(-50%, -50%) scale(1.05); }
+}
+
+.buy-btn.cannot-afford {
+    position: relative;
+    opacity: 0.6;
+}
+
+.buy-btn.cannot-afford::after {
+    content: '✕';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 48px;
+    color: rgba(231, 76, 60, 0.8);
+    font-weight: bold;
+    pointer-events: none;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
 }
 
 .tier-header {
@@ -115,15 +164,12 @@ body {
 
 .units-container {
     display: flex;
-    flex-direction: row;
-    gap: 8px;
-    flex-wrap: nowrap;
-    overflow-x: auto;
+    flex-direction: column;
+    gap: 6px;
 }
 
 .buy-btn {
-    flex: 0 0 auto;
-    min-width: 120px;
+    width: 100%;
     padding: 8px;
     background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
     border: 2px solid #34495e;
@@ -134,6 +180,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 4px;
+    position: relative;
 }
 
 .buy-btn .unit-name {
