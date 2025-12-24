@@ -46,6 +46,17 @@ body {
     gap: 5px;
 }
 
+.zone-container:nth-child(1),
+.zone-container:nth-child(3) {
+    width: 200px;
+    flex-shrink: 0;
+}
+
+.zone-container:nth-child(2) {
+    width: 800px;
+    flex-shrink: 0;
+}
+
 .zone {
     background: #34495e;
     border: 2px solid #7f8c8d;
@@ -54,21 +65,17 @@ body {
     position: relative;
     overflow: hidden;
     height: 280px;
-    margin-top: 5px;
 }
 
 #player-zone {
-    width: 200px;
     border-color: #3498db;
 }
 
 #battle-zone {
-    width: 800px;
     border-color: #e74c3c;
 }
 
 #ai-zone {
-    width: 200px;
     border-color: #e67e22;
 }
 
@@ -83,16 +90,19 @@ body {
     padding: 3px 8px;
     border-radius: 4px;
     font-weight: bold;
-    font-size: 12px;
+    font-size: 11px;
     color: white;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
     text-align: center;
     border: 2px solid #c0392b;
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 28px;
 }
 
 .lives-number {
     color: #ecf0f1;
-    font-size: 15px;
+    font-size: 14px;
     font-weight: bold;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
@@ -110,7 +120,7 @@ body {
     padding: 3px 8px;
     border-radius: 4px;
     font-weight: bold;
-    font-size: 12px;
+    font-size: 11px;
     color: white;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
     text-align: center;
@@ -119,15 +129,18 @@ body {
     justify-content: space-between;
     align-items: center;
     gap: 6px;
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 28px;
 }
 
 .gold-number {
     color: #f1c40f;
-    font-size: 15px;
+    font-size: 14px;
     font-weight: bold;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
     font-family: 'Courier New', monospace;
-    min-width: 50px;
+    min-width: 45px;
     display: inline-block;
     text-align: left;
 }
@@ -181,6 +194,8 @@ body {
     padding: 6px 12px;
     border-radius: 6px;
     border: 2px solid #7f8c8d;
+    height: 61px;
+    box-sizing: border-box;
 }
 
 .round-display {
