@@ -8,7 +8,12 @@ class MeleeBehavior extends UnitBehavior {
             return;
         }
         
-        if (!this.unit.target || this.unit.target.isDead || !enemies.includes(this.unit.target)) {
+        // Clear target if it's dead, not in enemies list, or invulnerable
+        if (this.unit.target && (this.unit.target.isDead || !enemies.includes(this.unit.target) || this.unit.target.isInvulnerable(currentTime))) {
+            this.unit.target = null;
+        }
+        
+        if (!this.unit.target) {
             this.unit.target = this.findTarget(battleContext);
         }
         
@@ -28,6 +33,8 @@ class MeleeBehavior extends UnitBehavior {
     
     findTarget(battleContext) {
         const enemies = battleContext.getEnemies(this.unit.owner);
-        return CombatSystem.findClosestEnemy(this.unit, enemies);
+        // Filter out invulnerable enemies
+        const targetableEnemies = enemies.filter(e => !e.isInvulnerable(performance.now()));
+        return CombatSystem.findClosestEnemy(this.unit, targetableEnemies);
     }
 }

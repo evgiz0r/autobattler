@@ -45,6 +45,11 @@ function placeUnit(unitType, x, y) {
         if (message) {
             message.style.display = 'none';
         }
+        // Enable economy button
+        const economyBtn = document.getElementById('economy-upgrade-btn');
+        if (economyBtn) {
+            economyBtn.disabled = false;
+        }
     }
     
     // Don't clear selection - keep unit selected for placing more
@@ -94,6 +99,13 @@ function startRound() {
                 spawnX,
                 templateUnit.y
             );
+            
+            // Set initial cooldown (50-100% already elapsed) so units don't instant-attack
+            const cooldownProgress = 0.5 + Math.random() * 0.5; // Random value between 0.5 and 1.0
+            battleUnit.lastAttackTime = performance.now() - (battleUnit.attackCooldown * cooldownProgress);
+            
+            // Set spawn time for invulnerability period
+            battleUnit.spawnTime = performance.now();
             
             gameState.units.push(battleUnit);
             createUnitElement(battleUnit, DOM.battleZone);

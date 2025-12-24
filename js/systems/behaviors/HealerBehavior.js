@@ -1,6 +1,11 @@
 // Healer unit behavior - heals allies within range
 class HealerBehavior extends UnitBehavior {
     update(deltaTime, currentTime, battleContext) {
+        // Clear target if it's fully healed or dead
+        if (this.unit.target && (this.unit.target.isDead || this.unit.target.hp >= this.unit.target.maxHp)) {
+            this.unit.target = null;
+        }
+        
         // Find closest wounded ally
         const closestAlly = this.findTarget(battleContext);
         

@@ -38,6 +38,7 @@ body {
     display: flex;
     gap: 10px;
     margin-bottom: 10px;
+    align-items: flex-start;
 }
 
 .zone-container {
@@ -131,7 +132,7 @@ body {
     gap: 6px;
     width: 100%;
     box-sizing: border-box;
-    min-height: 28px;
+    height: 28px;
 }
 
 .gold-number {

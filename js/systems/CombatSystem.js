@@ -113,9 +113,20 @@ const CombatSystem = {
     
     // Award gold for killing an enemy
     awardKillGold(enemyTier, attackerOwner) {
+        // Base kill gold scales with enemy tier
+        const baseGold = GAME_CONFIG.KILL_GOLD_BASE + (enemyTier * GAME_CONFIG.KILL_GOLD_PER_TIER);
+        
         if (attackerOwner === 'player') {
-            const goldAmount = GAME_CONFIG.KILL_GOLD_BASE + (enemyTier * GAME_CONFIG.KILL_GOLD_PER_TIER);
+            // Multiply by 1.5x for each tier unlocked (starting at tier 1 = 1x)
+            const tierMultiplier = Math.pow(1.5, gameState.player.unlockedTiers.length - 1);
+            const goldAmount = Math.round(baseGold * tierMultiplier);
             gameState.player.gold += goldAmount;
+        } else if (attackerOwner === 'ai') {
+            // AI gets gold with difficulty multiplier applied
+            const tierMultiplier = Math.pow(1.5, gameState.ai.unlockedTiers.length - 1);
+            const difficultyMultiplier = (GAME_CONFIG.DIFFICULTY[gameState.difficulty] || GAME_CONFIG.DIFFICULTY.MEDIUM).multiplier;
+            const goldAmount = Math.round(baseGold * tierMultiplier * difficultyMultiplier);
+            gameState.ai.gold += goldAmount;
         }
     }
 };

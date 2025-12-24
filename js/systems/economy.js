@@ -96,7 +96,7 @@ function upgradeEconomy() {
     // Update UI button
     const btn = document.getElementById('economy-upgrade-btn');
     const nextCost = baseCost + (gameState.player.economyLevel * 25);
-    btn.textContent = `Economy +1g/s (${nextCost}g)`;
+    btn.textContent = `+1g/s (${nextCost}g)`;
     
     console.log(`Economy upgraded! Now +${gameState.player.economyLevel}g/s`);
     updateUI();

@@ -30,6 +30,7 @@ class Unit {
         this.lastAttackTime = 0;
         this.target = null;
         this.isDead = false;
+        this.spawnTime = null; // Track when unit spawned in battle (null for build zone units)
         this.createdAt = Date.now(); // Track creation time
         this.expirationTime = this.getExpirationTime(); // Time until unit expires in build zone
         this.pausedTime = 0; // Track total paused time
@@ -60,8 +61,8 @@ class Unit {
     }
     
     getExpirationTime() {
-        // Consistent 60 seconds for all tiers
-        return 60000;
+        // Consistent 40 seconds for all tiers
+        return 40000;
     }
     
     takeDamage(amount) {
@@ -135,6 +136,12 @@ class Unit {
     
     canAttack(currentTime) {
         return currentTime - this.lastAttackTime >= this.attackCooldown;
+    }
+    
+    isInvulnerable(currentTime) {
+        // Units are invulnerable for 0.5 seconds after spawning
+        if (this.spawnTime === null) return false;
+        return (currentTime - this.spawnTime) < 500; // 500ms invulnerability
     }
     
     attack(currentTime) {

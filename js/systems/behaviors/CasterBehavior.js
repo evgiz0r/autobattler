@@ -8,7 +8,12 @@ class CasterBehavior extends UnitBehavior {
             return;
         }
         
-        if (!this.unit.target || this.unit.target.isDead || !enemies.includes(this.unit.target)) {
+        // Clear target if it's dead, not in enemies list, or invulnerable
+        if (this.unit.target && (this.unit.target.isDead || !enemies.includes(this.unit.target) || this.unit.target.isInvulnerable(currentTime))) {
+            this.unit.target = null;
+        }
+        
+        if (!this.unit.target) {
             this.unit.target = this.findTarget(battleContext);
         }
         
@@ -20,7 +25,8 @@ class CasterBehavior extends UnitBehavior {
         const distance = MathUtils.distance2D(this.unit, this.unit.target);
         
         if (distance > this.unit.attackRange) {
-            MovementSystem.moveHorizontally(this.unit, deltaTime, battleContext.battleWidth, this.unit.target);
+            // Move towards target in 2D to get within range
+            MovementSystem.moveTowardsTarget(this.unit, this.unit.target, deltaTime, battleContext.battleWidth);
         } else {
             CombatSystem.performCasterAttack(this.unit, this.unit.target, enemies, currentTime);
         }
@@ -28,6 +34,8 @@ class CasterBehavior extends UnitBehavior {
     
     findTarget(battleContext) {
         const enemies = battleContext.getEnemies(this.unit.owner);
-        return CombatSystem.findClosestEnemy(this.unit, enemies);
+        // Filter out invulnerable enemies
+        const targetableEnemies = enemies.filter(e => !e.isInvulnerable(performance.now()));
+        return CombatSystem.findClosestEnemy(this.unit, targetableEnemies);
     }
 }

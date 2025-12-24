@@ -225,6 +225,12 @@ function setupEventListeners() {
                 gameState.firstUnitPlaced = true;
                 const messageDiv = document.getElementById('first-unit-message');
                 messageDiv.style.display = 'none';
+                
+                // Enable economy button
+                const economyBtn = document.getElementById('economy-upgrade-btn');
+                if (economyBtn) {
+                    economyBtn.disabled = false;
+                }
             }
         } else {
             btn.style.background = '';
