@@ -12,7 +12,16 @@ function initializeGame() {
 }
 
 function updateUI() {
-    document.getElementById('player-health').textContent = gameState.player.health;
+    // Update lives display
+    document.getElementById('player-lives').textContent = gameState.player.health;
+    document.getElementById('ai-lives').textContent = gameState.ai.health;
+    
+    // Update comeback boost display for each player separately
+    const playerBoost = Math.round(gameState.player.livesLost * GAME_CONFIG.COMEBACK_BOOST_PER_LIFE * 100);
+    const aiBoost = Math.round(gameState.ai.livesLost * GAME_CONFIG.COMEBACK_BOOST_PER_LIFE * 100);
+    
+    document.getElementById('player-boost').textContent = playerBoost > 0 ? `(+${playerBoost}%)` : '';
+    document.getElementById('ai-boost').textContent = aiBoost > 0 ? `(+${aiBoost}%)` : '';
     
     // Show tier bonus in gold display
     const tierBonus = gameState.player.unlockedTiers.length - 1;
@@ -24,11 +33,9 @@ function updateUI() {
     const difficultyMultiplier = (GAME_CONFIG.DIFFICULTY[gameState.difficulty] || GAME_CONFIG.DIFFICULTY.MEDIUM).multiplier;
     const aiTotalBonus = Math.round((1 + aiTierBonus) * difficultyMultiplier * 10) / 10;
     
-    document.getElementById('ai-health').textContent = gameState.ai.health;
     document.getElementById('ai-gold').textContent = `${gameState.ai.gold} (+${aiTotalBonus}/s)`;
     document.getElementById('round-number').textContent = gameState.round;
     document.getElementById('round-timer').textContent = Math.ceil(gameState.roundTimer);
-    document.getElementById('ai-boost').textContent = Math.round(difficultyMultiplier * 100);
     
     // Update affordability indicators
     document.querySelectorAll('.buy-btn').forEach(btn => {

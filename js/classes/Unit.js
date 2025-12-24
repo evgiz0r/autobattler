@@ -7,10 +7,14 @@ class Unit {
         this.type = definition.type;
         this.tier = definition.tier;
         
-        // Stats
-        this.hp = definition.hp;
-        this.maxHp = definition.maxHp;
-        this.damage = definition.damage;
+        // Apply comeback boost based on lives lost
+        const ownerData = owner === 'player' ? gameState.player : gameState.ai;
+        const comebackBoost = 1 + (ownerData.livesLost * GAME_CONFIG.COMEBACK_BOOST_PER_LIFE);
+        
+        // Stats (with comeback boost applied)
+        this.hp = Math.round(definition.hp * comebackBoost);
+        this.maxHp = Math.round(definition.maxHp * comebackBoost);
+        this.damage = Math.round(definition.damage * comebackBoost);
         this.healAmount = definition.healAmount || 0;
         this.maxTargets = definition.maxTargets || 0;
         this.attackRange = definition.attackRange;

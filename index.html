@@ -12,29 +12,27 @@
         <div id="ui-top">
             <div id="player-stats">
                 <h3>Player</h3>
-                <div>Health: <span id="player-health">100</span></div>
                 <button id="pause-btn" style="margin-top: 10px;">Pause</button>
                 <button id="restart-btn" style="margin-top: 5px;">Restart</button>
                 <button id="ai-vs-ai-btn" style="margin-top: 5px;">AI vs AI</button>
                 <button id="target-lines-btn" style="margin-top: 5px;">Hide Target Lines</button>
-                <div style="margin-top: 10px;">
-                    <div style="font-size: 12px; margin-bottom: 3px;">Difficulty:</div>
-                    <div id="difficulty-selector">
-                        <button class="difficulty-btn" data-difficulty="EASY">Easy</button>
-                        <button class="difficulty-btn active" data-difficulty="MEDIUM">Medium</button>
-                        <button class="difficulty-btn" data-difficulty="HARD">Hard</button>
-                    </div>
-                </div>
             </div>
             <div id="ai-stats">
-                <h3>AI</h3>
-                <div>Health: <span id="ai-health">100</span></div>
-                <div style="color: #e74c3c; font-weight: bold;">Gold: <span id="ai-boost">100</span>%</div>
+                <h3>AI Difficulty</h3>
+                <div id="difficulty-selector">
+                    <button class="difficulty-btn" data-difficulty="EASY">Easy</button>
+                    <button class="difficulty-btn active" data-difficulty="MEDIUM">Medium</button>
+                    <button class="difficulty-btn" data-difficulty="HARD">Hard</button>
+                </div>
             </div>
         </div>
 
         <div id="game-board">
             <div class="zone-container">
+                <div class="zone-health">
+                    Lives: <span id="player-lives" class="lives-number">100</span>
+                    <span id="player-boost" class="boost-indicator"></span>
+                </div>
                 <div class="zone-gold">
                     <span>Gold: <span id="player-gold" class="gold-number">50</span></span>
                     <button id="economy-upgrade-btn" class="economy-btn">+Econ (50g)</button>
@@ -52,6 +50,10 @@
                 </div>
             </div>
             <div class="zone-container">
+                <div class="zone-health">
+                    Lives: <span id="ai-lives" class="lives-number">100</span>
+                    <span id="ai-boost" class="boost-indicator"></span>
+                </div>
                 <div class="zone-gold">Gold: <span id="ai-gold" class="gold-number">50</span></div>
                 <div id="ai-zone" class="zone">
                     <h4>AI Area</h4>

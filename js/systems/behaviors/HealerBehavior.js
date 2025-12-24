@@ -1,27 +1,27 @@
 // Healer unit behavior - heals allies within range
 class HealerBehavior extends UnitBehavior {
     update(deltaTime, currentTime, battleContext) {
-        const allies = battleContext.getAllies(this.unit.owner).filter(u => 
-            u.id !== this.unit.id && u.hp < u.maxHp
-        );
-        
-        if (allies.length === 0) {
-            MovementSystem.moveTowardsBase(this.unit, deltaTime, battleContext.battleWidth);
-            return;
-        }
-        
+        // Find closest wounded ally
         const closestAlly = this.findTarget(battleContext);
         
         if (!closestAlly) {
+            // No wounded allies, move towards base
             MovementSystem.moveTowardsBase(this.unit, deltaTime, battleContext.battleWidth);
             return;
         }
         
         const distance = MathUtils.distance2D(this.unit, closestAlly);
         
+        // Move towards wounded ally if out of range, stop if in range
         if (distance > this.unit.attackRange) {
-            MovementSystem.moveHorizontally(this.unit, deltaTime, battleContext.battleWidth);
+            // Set target for movement
+            this.unit.target = closestAlly;
+            MovementSystem.moveTowardsTarget(this.unit, closestAlly, deltaTime, battleContext.battleWidth);
         } else {
+            // In range, heal and stay in position
+            const allies = battleContext.getAllies(this.unit.owner).filter(u => 
+                u.id !== this.unit.id && u.hp < u.maxHp
+            );
             this.healAllies(allies, currentTime);
         }
     }

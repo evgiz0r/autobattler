@@ -54,6 +54,7 @@ body {
     position: relative;
     overflow: hidden;
     height: 280px;
+    margin-top: 5px;
 }
 
 #player-zone {
@@ -77,6 +78,33 @@ body {
     opacity: 0.5;
 }
 
+.zone-health {
+    background: rgba(231, 76, 60, 0.9);
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 12px;
+    color: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    text-align: center;
+    border: 2px solid #c0392b;
+}
+
+.lives-number {
+    color: #ecf0f1;
+    font-size: 15px;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.boost-indicator {
+    color: #2ecc71;
+    font-size: 13px;
+    font-weight: bold;
+    margin-left: 8px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
 .zone-gold {
     background: rgba(52, 152, 219, 0.9);
     padding: 3px 8px;
@@ -98,6 +126,10 @@ body {
     font-size: 15px;
     font-weight: bold;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    font-family: 'Courier New', monospace;
+    min-width: 50px;
+    display: inline-block;
+    text-align: left;
 }
 
 .economy-btn {

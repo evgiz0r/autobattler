@@ -1,7 +1,7 @@
 // Game configuration and constants
 const GAME_CONFIG = {
     STARTING_GOLD: 50,
-    STARTING_HEALTH: 1000,
+    STARTING_HEALTH: 100,
     ROUND_DURATION: 10, // seconds
     MAX_UNITS_PER_ZONE: 999, // Essentially unlimited
     MIN_UNIT_DISTANCE: 25,
@@ -20,7 +20,8 @@ const GAME_CONFIG = {
     AI_BUY_CHANCE: 0.01, // per frame
     PROJECTILE_SPEED: 200,
     PROJECTILE_MAX_AGE: 5000, // ms
-    BASE_DAMAGE_TO_CORE: 5,
+    BASE_DAMAGE_TO_CORE: 1,
+    COMEBACK_BOOST_PER_LIFE: 0.05, // 5% boost per life lost
     DIFFICULTY: {
         EASY: { name: 'Easy', multiplier: 0.8 },
         MEDIUM: { name: 'Medium', multiplier: 1.0 },
@@ -34,12 +35,14 @@ const gameState = {
         health: GAME_CONFIG.STARTING_HEALTH,
         gold: GAME_CONFIG.STARTING_GOLD,
         unlockedTiers: [1],
-        economyLevel: 0 // Economy upgrade level (0-3)
+        economyLevel: 0, // Economy upgrade level (0-3)
+        livesLost: 0 // Track lives lost for comeback mechanic
     },
     ai: {
         health: GAME_CONFIG.STARTING_HEALTH,
         gold: GAME_CONFIG.STARTING_GOLD,
-        unlockedTiers: [1]
+        unlockedTiers: [1],
+        livesLost: 0 // Track lives lost for comeback mechanic
     },
     round: 0,
     roundTimer: GAME_CONFIG.ROUND_DURATION,

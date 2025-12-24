@@ -29,10 +29,35 @@ function awardKillGold(tier, owner) {
 }
 
 function awardRoundGold() {
-    const goldAmount = GAME_CONFIG.ROUND_GOLD_BASE + (gameState.round * GAME_CONFIG.ROUND_GOLD_PER_ROUND);
+    let goldAmount = GAME_CONFIG.ROUND_GOLD_BASE + (gameState.round * GAME_CONFIG.ROUND_GOLD_PER_ROUND);
+    
+    // Add bonus gold based on highest unlocked tier (minimum cost of cheapest unit in that tier)
+    const highestTier = Math.max(...gameState.player.unlockedTiers);
+    const tierBonuses = {
+        1: 15,   // melee1/ranged1 cost
+        2: 30,   // melee2 cost
+        3: 80,   // melee3 cost
+        4: 150,  // melee4 cost
+        5: 280,  // melee5 cost
+        6: 500,  // melee6 cost
+        7: 900   // melee7 cost
+    };
+    
+    if (highestTier > 1) {
+        goldAmount += tierBonuses[highestTier] || 0;
+    }
+    
     gameState.player.gold += goldAmount;
+    
+    // AI gets same tier bonus
+    let aiGoldAmount = GAME_CONFIG.ROUND_GOLD_BASE + (gameState.round * GAME_CONFIG.ROUND_GOLD_PER_ROUND);
+    const aiHighestTier = Math.max(...gameState.ai.unlockedTiers);
+    if (aiHighestTier > 1) {
+        aiGoldAmount += tierBonuses[aiHighestTier] || 0;
+    }
+    
     const difficultyMultiplier = (GAME_CONFIG.DIFFICULTY[gameState.difficulty] || GAME_CONFIG.DIFFICULTY.MEDIUM).multiplier;
-    gameState.ai.gold += Math.round(goldAmount * difficultyMultiplier);
+    gameState.ai.gold += Math.round(aiGoldAmount * difficultyMultiplier);
 }
 
 function checkAutoUnlockTiers() {
