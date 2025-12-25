@@ -29,9 +29,9 @@ class Unit {
             this.maxTargets = 0;
         }
         
-        // Ranged pierce scaling: 0 base + 1 every 5 levels, capped at 2
+        // Ranged pierce scaling: 1 base + 1 every 5 levels, capped at 3
         if (this.type === 'ranged') {
-            this.pierceCount = Math.min(Math.floor(upgradeLevel / 5), 2);
+            this.pierceCount = Math.min(Math.floor(upgradeLevel / 5) + 1, 3);
         } else {
             this.pierceCount = 0;
         }
@@ -130,7 +130,8 @@ class Unit {
             const cooldownFill = this.element.querySelector('.cooldown-bar-fill');
             if (cooldownFill) {
                 const timeSinceAttack = currentTime - this.lastAttackTime;
-                const percent = Math.min(100, (timeSinceAttack / this.attackCooldown) * 100);
+                const effectiveCooldown = Math.max(1, this.attackCooldown / gameState.gameSpeed);
+                const percent = Math.min(100, (timeSinceAttack / effectiveCooldown) * 100);
                 cooldownFill.style.width = percent + '%';
             }
         }

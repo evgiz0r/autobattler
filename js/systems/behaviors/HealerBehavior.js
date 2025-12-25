@@ -1,22 +1,36 @@
 // Healer unit behavior - heals allies within range
 class HealerBehavior extends UnitBehavior {
     update(deltaTime, currentTime, battleContext) {
-        // Always move towards base - healers only heal allies they pass, don't chase backwards
-        MovementSystem.moveTowardsBase(this.unit, deltaTime, battleContext.battleWidth);
-        
-        // Find wounded allies in range and heal them
+        // Healers should acquire wounded allies as targets and move to heal them.
         const allies = battleContext.getAllies(this.unit.owner).filter(u => 
             u.id !== this.unit.id && u.hp < u.maxHp
         );
-        
-        // Filter allies within range
-        const alliesInRange = allies.filter(ally => {
-            const dist = MathUtils.distance2D(this.unit, ally);
-            return dist <= this.unit.attackRange;
-        });
-        
-        if (alliesInRange.length > 0) {
-            // Heal allies in range while continuing to move forward
+
+        if (allies.length === 0) {
+            MovementSystem.moveTowardsBase(this.unit, deltaTime, battleContext.battleWidth);
+            return;
+        }
+
+        // Clear target if it's dead, not an ally, or already at full HP
+        if (this.unit.target && (this.unit.target.isDead || !allies.includes(this.unit.target) || this.unit.target.hp >= this.unit.target.maxHp)) {
+            this.unit.target = null;
+        }
+
+        if (!this.unit.target) {
+            this.unit.target = this.findTarget(battleContext);
+        }
+
+        if (!this.unit.target) {
+            MovementSystem.moveTowardsBase(this.unit, deltaTime, battleContext.battleWidth);
+            return;
+        }
+
+        const distance = MathUtils.distance2D(this.unit, this.unit.target);
+
+        if (distance > this.unit.attackRange) {
+            MovementSystem.moveTowardsTarget(this.unit, this.unit.target, deltaTime, battleContext.battleWidth);
+        } else {
+            // Heal allies in range (including the target)
             this.healAllies(allies, currentTime);
         }
     }

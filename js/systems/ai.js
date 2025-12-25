@@ -6,12 +6,14 @@ const AI_STRATEGIES = {
         name: 'The Swarm',
         upgradeChance: 0.05, // Upgrades occasionally to spend excess gold
         preferredUnit: null, // Random selection
+        buyEarlyMultiplier: 2.0,
         description: 'Builds units non-stop, upgrades rarely'
     },
     AGGRESSIVE_UPGRADE: {
         name: 'The Perfectionist',
         upgradeChance: 0.2,
         preferredUnit: null,
+        buyEarlyMultiplier: 1.6,
         description: 'Upgrades aggressively whenever possible'
     },
     RANGED_SPECIALIST: {
@@ -19,6 +21,7 @@ const AI_STRATEGIES = {
         upgradeChance: 0.7, // Much higher base upgrade chance
         preferredUnit: 'ranged',
         preferredUpgradeChance: 0.98, // Almost always upgrade ranged if possible
+        buyEarlyMultiplier: 1.2,
         description: 'Upgrades ranged units and builds them almost exclusively'
     },
     MELEE_SPECIALIST: {
@@ -26,6 +29,7 @@ const AI_STRATEGIES = {
         upgradeChance: 0.15,
         preferredUnit: 'melee',
         preferredUpgradeChance: 0.6, // Higher chance to upgrade favorite
+        buyEarlyMultiplier: 1.3,
         description: 'Upgrades melee units and builds them almost exclusively'
     },
     CASTER_SPECIALIST: {
@@ -35,6 +39,7 @@ const AI_STRATEGIES = {
         preferredUpgradeChance: 0.7,
         secondaryUnit: 'melee',
         secondaryChance: 0.3, // 30% chance to build melee, 70% caster
+        buyEarlyMultiplier: 1.1,
         description: 'Focuses on casters with some melee support'
     },
     SUPPORT_SPECIALIST: {
@@ -45,6 +50,7 @@ const AI_STRATEGIES = {
         secondaryUnit: 'caster',
         secondaryChance: 0.4, // Mix of healer and caster
         meleeFrontline: true, // Always ensures at least 1 melee in front
+        buyEarlyMultiplier: 1.05,
         description: 'Healer and caster focus with melee frontline protection'
     },
     NOOB: {
@@ -53,6 +59,7 @@ const AI_STRATEGIES = {
         preferredUnit: 'melee', // Mostly builds melee (bad strategy)
         preferredChance: 0.7, // 70% melee, 30% random
         buyChanceMultiplier: 0.3, // Buys 3x less frequently
+        buyEarlyMultiplier: 0.5,
         badPlacement: true, // Places units randomly without strategy
         description: 'Plays poorly - bad placement, rarely upgrades, slow spending'
     }

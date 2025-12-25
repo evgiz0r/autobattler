@@ -122,7 +122,8 @@ function startRound() {
             
             // Set initial cooldown (50-100% already elapsed) so units don't instant-attack
             // Scale the cooldown by game speed so it's consistent across different speeds
-            const cooldownProgress = 0.5 + Math.random() * 0.5; // Random value between 0.5 and 1.0
+            const cooldownProgress = 0.6 + Math.random() * 0.3; // Random value between 0.6 and 0.9
+
             const effectiveCooldown = battleUnit.attackCooldown / gameState.gameSpeed;
             battleUnit.lastAttackTime = gameState.gameTime - (effectiveCooldown * cooldownProgress);
             

@@ -374,8 +374,8 @@ function setupEventListeners() {
     DOM.playerZone.addEventListener('click', (e) => {
         if (gameState.selectedUnitType) {
             const rect = DOM.playerZone.getBoundingClientRect();
-            const x = e.clientX - rect.left - 10; // Center the unit (half of 20px width)
-            const y = e.clientY - rect.top - 10; // Center the unit (half of 20px height)
+            const x = e.clientX - rect.left - 20; // Center the unit (half of 40px width)
+            const y = e.clientY - rect.top - 20; // Center the unit (half of 40px height)
             placeUnit(gameState.selectedUnitType, x, y);
             
             // Temporarily hide the preview to avoid blur/overlap with placed unit

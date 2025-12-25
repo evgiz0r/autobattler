@@ -66,7 +66,14 @@ function gameLoop(timestamp) {
         // AI buying - allowed at any time (building allowed during rounds)
         // Scale buy chance by game speed so AI buys faster at higher speeds
         const baseBuyChance = GAME_CONFIG.AI_BUY_CHANCE + (gameState.round * GAME_CONFIG.AI_BUY_CHANCE_PER_ROUND);
-        const aiBuyChance = baseBuyChance * gameState.gameSpeed;
+        let aiBuyChance = baseBuyChance * gameState.gameSpeed;
+        // Factor AI strategy early-buy preference
+        const aiStrategy = gameState.ai.strategy || null;
+        if (aiStrategy && aiStrategy.buyEarlyMultiplier) {
+            // Boost AI buy chance in very early rounds to favor early unit production
+            const earlyRoundFactor = gameState.round < 3 ? 1.5 : 1.0;
+            aiBuyChance *= (aiStrategy.buyEarlyMultiplier * earlyRoundFactor);
+        }
         if (gameState.firstUnitPlaced && Math.random() < aiBuyChance) {
             aiPurchaseUnits();
         }

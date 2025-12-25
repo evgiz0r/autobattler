@@ -1,13 +1,13 @@
 // Game configuration and constants
 const GAME_CONFIG = {
-    STARTING_GOLD: 60,
+    STARTING_GOLD: 100,
     STARTING_HEALTH: 100,
     // Single unified round duration (seconds)
     ROUND_DURATION: 15,
     // Kept for compatibility with older code; use ROUND_DURATION for timing
     BATTLE_DURATION: 15,
     MAX_UNITS_PER_ZONE: 999, // Essentially unlimited
-    MIN_UNIT_DISTANCE: 25,
+    MIN_UNIT_DISTANCE: 50,
     UPGRADE_HP_MULTIPLIER: 1.05, // 105% HP per upgrade (5% increase)
     UPGRADE_DAMAGE_MULTIPLIER: 1.05, // 105% damage per upgrade (5% increase)
     UPGRADE_COOLDOWN_MULTIPLIER: 0.95, // 5% faster attacks per upgrade
