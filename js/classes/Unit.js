@@ -86,7 +86,7 @@ class Unit {
     
     getExpirationTime() {
         // Consistent 40 seconds for all tiers
-        return 40000;
+        return 80000;
     }
     
     takeDamage(amount) {

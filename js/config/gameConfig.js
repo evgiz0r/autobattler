@@ -1,9 +1,9 @@
 // Game configuration and constants
 const GAME_CONFIG = {
-    STARTING_GOLD: 50,
+    STARTING_GOLD: 60,
     STARTING_HEALTH: 100,
-    ROUND_DURATION: 10, // seconds for build phase
-    BATTLE_DURATION: 15, // seconds for battle phase
+    ROUND_DURATION: 5, // seconds for build phase
+    BATTLE_DURATION: 10, // seconds for battle phase
     MAX_UNITS_PER_ZONE: 999, // Essentially unlimited
     MIN_UNIT_DISTANCE: 25,
     UPGRADE_HP_MULTIPLIER: 1.05, // 105% HP per upgrade (5% increase)
@@ -67,7 +67,7 @@ const gameState = {
     infiniteMode: false, // Infinite mode - game doesn't end when lives reach 0
     selectedAIStrategy: null, // Selected enemy AI strategy (null = random)
     selectedPlayerAIStrategy: null, // Selected player AI strategy for AI vs AI mode (null = random)
-    gameSpeed: 3 // Game speed multiplier (1 = normal, 2 = 2x, 3 = 3x)
+    gameSpeed: 2 // Game speed multiplier (1 = normal, 2 = 2x, 3 = 3x)
 };
 
 // DOM element references
