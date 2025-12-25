@@ -22,7 +22,6 @@ const GAME_CONFIG = {
     PROJECTILE_SPEED: 200,
     PROJECTILE_MAX_AGE: 5000, // ms
     BASE_DAMAGE_TO_CORE: 1,
-    COMEBACK_BOOST_PER_LIFE: 0.05, // 5% boost per life lost
     DIFFICULTY: {
         EASY: { name: 'Easy', multiplier: 0.8 },
         MEDIUM: { name: 'Medium', multiplier: 1.0 },

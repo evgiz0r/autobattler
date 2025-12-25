@@ -15,15 +15,19 @@ class Unit {
         const cooldownMult = Math.max(Math.pow(GAME_CONFIG.UPGRADE_COOLDOWN_MULTIPLIER, upgradeLevel), GAME_CONFIG.MIN_COOLDOWN_MULTIPLIER);
         const aoeMult = Math.min(Math.pow(GAME_CONFIG.UPGRADE_AOE_MULTIPLIER, upgradeLevel), GAME_CONFIG.MAX_AOE_MULTIPLIER);
         
-        // Apply comeback boost based on lives lost
-        const comebackBoost = 1 + (ownerData.livesLost * GAME_CONFIG.COMEBACK_BOOST_PER_LIFE);
-        
-        // Stats (with upgrade and comeback boost applied)
-        this.hp = Math.round(definition.hp * hpMult * comebackBoost);
-        this.maxHp = Math.round(definition.maxHp * hpMult * comebackBoost);
-        this.damage = Math.round(definition.damage * dmgMult * comebackBoost);
+        // Stats (with upgrade applied)
+        this.hp = Math.round(definition.hp * hpMult);
+        this.maxHp = Math.round(definition.maxHp * hpMult);
+        this.damage = Math.round(definition.damage * dmgMult);
         this.healAmount = Math.round((definition.healAmount || 0) * dmgMult);
-        this.maxTargets = definition.maxTargets || 0;
+        
+        // Healer target scaling: +1 target every 5 levels, capped at 5
+        if (definition.maxTargets) {
+            const bonusTargets = Math.floor(upgradeLevel / 5);
+            this.maxTargets = Math.min(definition.maxTargets + bonusTargets, 5);
+        } else {
+            this.maxTargets = 0;
+        }
         this.attackRange = definition.attackRange;
         this.attackCooldown = Math.round(definition.attackCooldown * cooldownMult);
         this.speed = definition.speed;

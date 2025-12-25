@@ -30,12 +30,12 @@ function updateUI() {
     document.getElementById('player-lives').textContent = gameState.player.health;
     document.getElementById('ai-lives').textContent = gameState.ai.health;
     
-    // Update comeback boost display for each player separately
-    const playerBoost = Math.round(gameState.player.livesLost * GAME_CONFIG.COMEBACK_BOOST_PER_LIFE * 100);
-    const aiBoost = Math.round(gameState.ai.livesLost * GAME_CONFIG.COMEBACK_BOOST_PER_LIFE * 100);
+    // Update comeback upgrades display (every 5 lives = 1 upgrade)
+    const playerUpgrades = Math.floor(gameState.player.livesLost / 5);
+    const aiUpgrades = Math.floor(gameState.ai.livesLost / 5);
     
-    document.getElementById('player-boost').textContent = playerBoost > 0 ? `(+${playerBoost}%)` : '';
-    document.getElementById('ai-boost').textContent = aiBoost > 0 ? `(+${aiBoost}%)` : '';
+    document.getElementById('player-boost').textContent = playerUpgrades > 0 ? `(+${playerUpgrades} lvl)` : '';
+    document.getElementById('ai-boost').textContent = aiUpgrades > 0 ? `(+${aiUpgrades} lvl)` : '';
     
     // Show economy bonus in gold display
     const economyBonus = gameState.player.economyLevel || 0;

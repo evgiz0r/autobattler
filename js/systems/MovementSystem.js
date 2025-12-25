@@ -111,6 +111,15 @@ const MovementSystem = {
         if (unit.owner === 'player' && unit.x >= battleWidth - 10) {
             gameState.ai.health -= GAME_CONFIG.BASE_DAMAGE_TO_CORE;
             gameState.ai.livesLost++;
+            
+            // Comeback mechanic: every 5 lives lost, upgrade all units
+            if (gameState.ai.livesLost % 5 === 0) {
+                const types = ['melee', 'ranged', 'caster', 'healer'];
+                types.forEach(type => {
+                    gameState.ai.upgradeLevels[type]++;
+                });
+            }
+            
             unit.isDead = true;
             if (unit.element) {
                 unit.element.remove();
@@ -119,6 +128,15 @@ const MovementSystem = {
         } else if (unit.owner === 'ai' && unit.x <= 10) {
             gameState.player.health -= GAME_CONFIG.BASE_DAMAGE_TO_CORE;
             gameState.player.livesLost++;
+            
+            // Comeback mechanic: every 5 lives lost, upgrade all units
+            if (gameState.player.livesLost % 5 === 0) {
+                const types = ['melee', 'ranged', 'caster', 'healer'];
+                types.forEach(type => {
+                    gameState.player.upgradeLevels[type]++;
+                });
+            }
+            
             unit.isDead = true;
             if (unit.element) {
                 unit.element.remove();
