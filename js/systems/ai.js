@@ -110,15 +110,19 @@ function aiPurchaseUnits() {
     if (!unitType) {
         if (strategy.preferredUnit) {
             // Check if strategy has secondary unit logic
-            if (strategy.secondaryUnit && Math.random() < strategy.secondaryChance) {
-                unitType = strategy.secondaryUnit;
+            if (strategy.secondaryUnit) {
+                // secondaryChance is the chance to build the secondary unit
+                // e.g., 0.3 = 30% secondary, 70% preferred
+                if (Math.random() < strategy.secondaryChance) {
+                    unitType = strategy.secondaryUnit;
+                } else {
+                    unitType = strategy.preferredUnit;
+                }
             } else {
-                // Build preferred unit most of the time
-                const preferChance = strategy.secondaryUnit ? (1 - strategy.secondaryChance) : 0.8;
-                if (Math.random() < preferChance) {
+                // 80% preferred unit, 20% random
+                if (Math.random() < 0.8) {
                     unitType = strategy.preferredUnit;
                 } else {
-                    // Random selection from all 4 units
                     const types = ['melee', 'ranged', 'caster', 'healer'];
                     unitType = types[Math.floor(Math.random() * types.length)];
                 }
@@ -270,15 +274,19 @@ function playerAIPurchaseUnits() {
     if (!unitType) {
         if (strategy.preferredUnit) {
             // Check if strategy has secondary unit logic
-            if (strategy.secondaryUnit && Math.random() < strategy.secondaryChance) {
-                unitType = strategy.secondaryUnit;
+            if (strategy.secondaryUnit) {
+                // secondaryChance is the chance to build the secondary unit
+                // e.g., 0.3 = 30% secondary, 70% preferred
+                if (Math.random() < strategy.secondaryChance) {
+                    unitType = strategy.secondaryUnit;
+                } else {
+                    unitType = strategy.preferredUnit;
+                }
             } else {
-                // Build preferred unit most of the time
-                const preferChance = strategy.secondaryUnit ? (1 - strategy.secondaryChance) : 0.8;
-                if (Math.random() < preferChance) {
+                // 80% preferred unit, 20% random
+                if (Math.random() < 0.8) {
                     unitType = strategy.preferredUnit;
                 } else {
-                    // Random selection from all 4 units
                     const types = ['melee', 'ranged', 'caster', 'healer'];
                     unitType = types[Math.floor(Math.random() * types.length)];
                 }
