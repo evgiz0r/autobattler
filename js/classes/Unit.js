@@ -28,6 +28,14 @@ class Unit {
         } else {
             this.maxTargets = 0;
         }
+        
+        // Ranged pierce scaling: 0 base + 1 every 5 levels, capped at 2
+        if (this.type === 'ranged') {
+            this.pierceCount = Math.min(Math.floor(upgradeLevel / 5), 2);
+        } else {
+            this.pierceCount = 0;
+        }
+        
         this.attackRange = definition.attackRange;
         this.attackCooldown = Math.round(definition.attackCooldown * cooldownMult);
         this.speed = definition.speed;
@@ -47,7 +55,7 @@ class Unit {
         this.target = null;
         this.isDead = false;
         this.spawnTime = null; // Track when unit spawned in battle (null for build zone units)
-        this.createdAt = Date.now(); // Track creation time
+        this.createdAt = gameState.gameTime; // Track creation time using game time
         this.expirationTime = this.getExpirationTime(); // Time until unit expires in build zone
         this.pausedTime = 0; // Track total paused time
         this.lastPauseStart = null; // Track when pause started
@@ -132,8 +140,8 @@ class Unit {
         if (this.element) {
             const timerText = this.element.querySelector('.unit-timer');
             if (timerText) {
-                // Account for paused time
-                const elapsed = Date.now() - this.createdAt - this.pausedTime;
+                // Use game time instead of real time
+                const elapsed = gameState.gameTime - this.createdAt - this.pausedTime;
                 const timeLeft = Math.max(0, this.expirationTime - elapsed);
                 const seconds = Math.ceil(timeLeft / 1000);
                 timerText.textContent = seconds + 's';
@@ -156,9 +164,10 @@ class Unit {
     }
     
     isInvulnerable(currentTime) {
-        // Units are invulnerable for 0.5 seconds after spawning
+        // Units are invulnerable for 1.5 seconds after spawning (scaled by game speed)
         if (this.spawnTime === null) return false;
-        return (currentTime - this.spawnTime) < 500; // 500ms invulnerability
+        const invulnerabilityDuration = 1500 / gameState.gameSpeed;
+        return (currentTime - this.spawnTime) < invulnerabilityDuration;
     }
     
     checkIfStuck(currentTime) {

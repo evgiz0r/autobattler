@@ -75,8 +75,8 @@ const ShopManager = {
     
     getUnitCost(type, upgradeLevel) {
         const def = UNIT_DEFINITIONS[type];
-        // Unit cost increases by +5 per upgrade level
-        return def.cost + (upgradeLevel * 5);
+        // Unit cost increases by +10 per upgrade level
+        return def.cost + (upgradeLevel * 10);
     },
     
     getUpgradeCost(type, upgradeLevel) {
@@ -108,5 +108,20 @@ const ShopManager = {
     
     capitalizeFirst(str) {
         return str.charAt(0).toUpperCase() + str.slice(1);
+    },
+    
+    deselectUnit() {
+        gameState.selectedUnitType = null;
+        
+        // Remove cursor preview
+        if (gameState.cursorPreview) {
+            gameState.cursorPreview.remove();
+            gameState.cursorPreview = null;
+        }
+        
+        // Remove active state from all buy buttons
+        document.querySelectorAll('.buy-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
     }
 };

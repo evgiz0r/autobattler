@@ -24,6 +24,88 @@ function displayPlayerAIStrategy(strategy) {
     }
 }
 
+function restartGame() {
+    // Reset game state
+    gameState.player.health = GAME_CONFIG.STARTING_HEALTH;
+    gameState.player.gold = GAME_CONFIG.STARTING_GOLD;
+    gameState.player.upgradeLevels = { melee: 0, ranged: 0, caster: 0, healer: 0 };
+    gameState.player.economyLevel = 0;
+    gameState.player.livesLost = 0;
+    gameState.player.strategy = null;
+    
+    gameState.ai.health = GAME_CONFIG.STARTING_HEALTH;
+    gameState.ai.gold = GAME_CONFIG.STARTING_GOLD;
+    gameState.ai.upgradeLevels = { melee: 0, ranged: 0, caster: 0, healer: 0 };
+    gameState.ai.livesLost = 0;
+    gameState.ai.strategy = null;
+    
+    gameState.round = 0;
+    gameState.roundTimer = GAME_CONFIG.ROUND_DURATION;
+    gameState.roundStartTime = 0;
+    gameState.isRoundActive = false;
+    gameState.playerUnitsSpawned = 0;
+    gameState.aiUnitsSpawned = 0;
+    gameState.gameTime = 0;
+    gameState.passiveGoldTimer = 0;
+    // In AI vs AI mode, auto-start the game
+    gameState.firstUnitPlaced = gameState.isAIvsAI;
+    
+    // Clear all units
+    gameState.units.forEach(unit => {
+        if (unit.element) unit.element.remove();
+        if (unit.targetLine) unit.targetLine.remove();
+    });
+    gameState.units = [];
+    
+    // Clear all projectiles
+    gameState.projectiles.forEach(proj => {
+        if (proj.element) proj.element.remove();
+    });
+    gameState.projectiles = [];
+    
+    // Clear cursor preview
+    if (gameState.cursorPreview) {
+        gameState.cursorPreview.remove();
+        gameState.cursorPreview = null;
+    }
+    gameState.selectedUnitType = null;
+    
+    // Clear any game over message
+    const messageDiv = document.getElementById('first-unit-message');
+    if (messageDiv) {
+        messageDiv.textContent = 'Place Your First Unit!';
+        messageDiv.style.display = gameState.isAIvsAI ? 'none' : 'block';
+        // Reset message styling
+        messageDiv.style.fontSize = '';
+        messageDiv.style.padding = '';
+        messageDiv.style.top = '';
+        messageDiv.style.left = '';
+        messageDiv.style.transform = '';
+    }
+    
+    // Reset zone labels
+    const playerZoneLabel = document.getElementById('player-zone-label');
+    const aiZoneLabel = document.getElementById('ai-zone-label');
+    if (playerZoneLabel) playerZoneLabel.textContent = 'Build Area';
+    if (aiZoneLabel) aiZoneLabel.textContent = 'AI';
+    
+    // Disable economy button unless in AI vs AI mode
+    const economyBtn = document.getElementById('economy-upgrade-btn');
+    if (economyBtn) economyBtn.disabled = !gameState.isAIvsAI;
+    
+    // Re-enable AI strategy buttons
+    document.querySelectorAll('.ai-strategy-btn').forEach(btn => {
+        btn.disabled = false;
+    });
+    document.querySelectorAll('.player-ai-strategy-btn').forEach(btn => {
+        btn.disabled = false;
+    });
+    
+    // Update shops
+    updateUpgradeButtons();
+    updateUI();
+}
+
 function updateUI() {
     // Update lives display
     document.getElementById('player-lives').textContent = gameState.player.health;
@@ -47,6 +129,10 @@ function updateUI() {
     document.getElementById('ai-gold').textContent = `${gameState.ai.gold} (+${aiTotalBonus}/s)`;
     document.getElementById('round-number').textContent = gameState.round;
     document.getElementById('round-timer').textContent = Math.ceil(gameState.roundTimer);
+    
+    // Update auto-upgrade countdown (every 3 rounds)
+    const roundsUntilUpgrade = 3 - (gameState.round % 3);
+    document.getElementById('upgrade-countdown').textContent = roundsUntilUpgrade;
     
     // Update affordability indicators for both player and AI shops
     document.querySelectorAll('.buy-btn[data-owner="player"]').forEach(btn => {
@@ -98,23 +184,58 @@ function updateUI() {
     });
 }
 
+// Helper to ensure cursor preview exists
+function ensureCursorPreview() {
+    if (!gameState.selectedUnitType) return;
+    const definition = UNIT_DEFINITIONS[gameState.selectedUnitType];
+    if (!definition) return;
+    
+    // Only create if it doesn't exist
+    if (!gameState.cursorPreview || !gameState.cursorPreview.parentElement) {
+        const preview = document.createElement('div');
+        preview.className = `unit player ${definition.type} cursor-preview`;
+        preview.innerHTML = `
+            <div class="unit-hp">${definition.hp}</div>
+            <div class="health-bar">
+                <div class="health-bar-fill" style="width: 100%;"></div>
+            </div>
+        `;
+        preview.style.pointerEvents = 'none';
+        preview.style.opacity = '0.6';
+        preview.style.position = 'absolute';
+        preview.style.display = 'none'; // Start hidden, mousemove will show it
+        DOM.playerZone.appendChild(preview);
+        gameState.cursorPreview = preview;
+    }
+}
+
 function selectUnitForPlacement(unitType) {
     const definition = UNIT_DEFINITIONS[unitType];
     if (!definition) return;
     
     gameState.selectedUnitType = unitType;
     
-    // Create cursor preview
+    // Remove old preview if type changed
     if (gameState.cursorPreview) {
         gameState.cursorPreview.remove();
+        gameState.cursorPreview = null;
     }
     
+    // Create new preview immediately visible
     const preview = document.createElement('div');
     preview.className = `unit player ${definition.type} cursor-preview`;
+    preview.innerHTML = `
+        <div class="unit-hp">${definition.hp}</div>
+        <div class="health-bar">
+            <div class="health-bar-fill" style="width: 100%;"></div>
+        </div>
+    `;
     preview.style.pointerEvents = 'none';
     preview.style.opacity = '0.6';
     preview.style.position = 'absolute';
-    preview.style.display = 'none';
+    preview.style.left = '0px';
+    preview.style.top = '0px';
+    preview.style.display = 'block';
     DOM.playerZone.appendChild(preview);
     gameState.cursorPreview = preview;
     
@@ -165,8 +286,18 @@ function updateUpgradeButtons() {
             // Update upgrade button
             const upgradeBtn = document.querySelector(`.upgrade-btn[data-type="${type}"][data-owner="${owner}"]`);
             if (upgradeBtn) {
+                let countdownText = '';
+                if (owner === 'player') {
+                    const currentGold = gameState.player.gold;
+                    if (currentGold < upgradeCost) {
+                        const goldNeeded = upgradeCost - currentGold;
+                        const roundIncome = GAME_CONFIG.ROUND_GOLD_BASE + (gameState.round * GAME_CONFIG.ROUND_GOLD_PER_ROUND);
+                        const roundsNeeded = Math.ceil(goldNeeded / roundIncome);
+                        countdownText = ` <span style="color: #f39c12; font-size: 9px;">(+1 in ${roundsNeeded}r)</span>`;
+                    }
+                }
                 upgradeBtn.innerHTML = `
-                    <div>Upgrade (${upgradeCost}g)</div>
+                    <div>Upgrade (${upgradeCost}g)${countdownText}</div>
                     <small>Lvl ${upgradeLevel} → ${upgradeLevel + 1}</small>
                 `;
             }
@@ -223,11 +354,14 @@ function setupEventListeners() {
         if (gameState.selectedUnitType) {
             DOM.playerZone.style.cursor = 'none';
             
+            // Ensure preview exists
+            ensureCursorPreview();
+            
             if (gameState.cursorPreview) {
                 const rect = DOM.playerZone.getBoundingClientRect();
                 const x = e.clientX - rect.left;
                 const y = e.clientY - rect.top;
-                gameState.cursorPreview.style.left = (x - 10) + 'px'; // Center on cursor
+                gameState.cursorPreview.style.left = (x - 10) + 'px';
                 gameState.cursorPreview.style.top = (y - 10) + 'px';
                 gameState.cursorPreview.style.display = 'block';
             }
@@ -253,7 +387,7 @@ function setupEventListeners() {
         document.getElementById('pause-btn').textContent = gameState.isPaused ? 'Resume' : 'Pause';
         
         // Track pause time for all units
-        const now = Date.now();
+        const now = gameState.gameTime;
         if (gameState.isPaused) {
             // Game just paused - mark pause start time for all units
             gameState.units.forEach(unit => {
@@ -274,7 +408,7 @@ function setupEventListeners() {
     document.addEventListener('visibilitychange', () => {
         if (document.hidden && !gameState.isPaused) {
             // Tab hidden - pause the game
-            const now = Date.now();
+            const now = gameState.gameTime;
             gameState.isPaused = true;
             document.getElementById('pause-btn').textContent = 'Resume';
             
@@ -284,7 +418,7 @@ function setupEventListeners() {
             });
         } else if (!document.hidden && gameState.isPaused) {
             // Tab visible again - unpause the game
-            const now = Date.now();
+            const now = gameState.gameTime;
             gameState.isPaused = false;
             document.getElementById('pause-btn').textContent = 'Pause';
             
@@ -349,6 +483,20 @@ function setupEventListeners() {
         });
     });
     
+    // Player AI strategy selection buttons (for AI vs AI mode)
+    document.querySelectorAll('.player-ai-strategy-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const strategy = btn.dataset.strategy;
+            console.log('Player AI strategy button clicked:', strategy);
+            
+            gameState.selectedPlayerAIStrategy = strategy;
+            
+            // Update active state
+            document.querySelectorAll('.player-ai-strategy-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        });
+    });
+    
     // AI strategy selector
     document.querySelectorAll('.ai-strategy-btn').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -383,20 +531,6 @@ function setupEventListeners() {
             btn.style.background = '#2ecc71';
             btn.textContent = 'AI vs AI: ON';
             
-            // Initialize and display player AI strategy
-            if (!gameState.player.strategy) {
-                const strategies = Object.keys(AI_STRATEGIES);
-                const chosenKey = strategies[Math.floor(Math.random() * strategies.length)];
-                gameState.player.strategy = {
-                    key: chosenKey,
-                    ...AI_STRATEGIES[chosenKey]
-                };
-                displayPlayerAIStrategy(gameState.player.strategy);
-            }
-            
-            // Disable AI vs AI button during gameplay
-            btn.disabled = true;
-            
             // Start the game if not started
             if (!gameState.firstUnitPlaced) {
                 gameState.firstUnitPlaced = true;
@@ -411,14 +545,17 @@ function setupEventListeners() {
             }
         } else {
             btn.style.background = '';
-            btn.textContent = 'AI vs AI';
-            
+            btn.textContent = 'AI vs AI: OFF';
+            btn.disabled = false;
             // Restore Build Area label
             const playerZoneLabel = document.getElementById('player-zone-label');
             if (playerZoneLabel) {
                 playerZoneLabel.textContent = 'Build Area';
             }
         }
+        
+        // Restart the game with new settings
+        restartGame();
     });
     
     // Difficulty selector

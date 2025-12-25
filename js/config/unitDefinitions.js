@@ -4,12 +4,12 @@ const UNIT_DEFINITIONS = {
         name: 'Melee',
         type: 'melee',
         cost: 20,
-        hp: 400,
-        maxHp: 400,
-        damage: 15,
+        hp: 320,
+        maxHp: 320,
+        damage: 22,
         attackRange: 35,
         attackCooldown: 1000,
-        speed: 96,
+        speed: 77,
         aoeRadius: 25
     },
     ranged: {
@@ -18,9 +18,9 @@ const UNIT_DEFINITIONS = {
         cost: 25,
         hp: 60,
         maxHp: 60,
-        damage: 22,
-        attackRange: 120,
-        attackCooldown: 1500,
+        damage: 18,
+        attackRange: 100,
+        attackCooldown: 1700,
         speed: 84
     },
     caster: {
@@ -29,7 +29,7 @@ const UNIT_DEFINITIONS = {
         cost: 30,
         hp: 50,
         maxHp: 50,
-        damage: 55,
+        damage: 28,
         attackRange: 140,
         attackCooldown: 2000,
         speed: 66,
@@ -42,11 +42,11 @@ const UNIT_DEFINITIONS = {
         hp: 80,
         maxHp: 80,
         damage: 0,
-        healAmount: 25,
+        healAmount: 22,
         maxTargets: 1,
         attackRange: 50,
-        attackCooldown: 2500,
-        speed: 72,
+        attackCooldown: 3000,
+        speed: 40,
         aoeRadius: 0
     }
 };

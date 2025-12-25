@@ -1,46 +1,23 @@
 // Healer unit behavior - heals allies within range
 class HealerBehavior extends UnitBehavior {
     update(deltaTime, currentTime, battleContext) {
-        // Clear target if it's fully healed or dead
-        if (this.unit.target && (this.unit.target.isDead || this.unit.target.hp >= this.unit.target.maxHp)) {
-            this.unit.target = null;
-        }
+        // Always move towards base - healers only heal allies they pass, don't chase backwards
+        MovementSystem.moveTowardsBase(this.unit, deltaTime, battleContext.battleWidth);
         
-        // Find closest wounded ally
-        const closestAlly = this.findTarget(battleContext);
+        // Find wounded allies in range and heal them
+        const allies = battleContext.getAllies(this.unit.owner).filter(u => 
+            u.id !== this.unit.id && u.hp < u.maxHp
+        );
         
-        if (!closestAlly) {
-            // No wounded allies, move towards base
-            MovementSystem.moveTowardsBase(this.unit, deltaTime, battleContext.battleWidth);
-            return;
-        }
+        // Filter allies within range
+        const alliesInRange = allies.filter(ally => {
+            const dist = MathUtils.distance2D(this.unit, ally);
+            return dist <= this.unit.attackRange;
+        });
         
-        const distance = MathUtils.distance2D(this.unit, closestAlly);
-        
-        // Move towards wounded ally if out of range, stop if in range
-        if (distance > this.unit.attackRange) {
-            // Set target for movement
-            this.unit.target = closestAlly;
-            MovementSystem.moveTowardsTarget(this.unit, closestAlly, deltaTime, battleContext.battleWidth);
-        } else {
-            // In range, heal and stay in position
-            const allies = battleContext.getAllies(this.unit.owner).filter(u => 
-                u.id !== this.unit.id && u.hp < u.maxHp
-            );
-            
-            // Filter allies within range
-            const alliesInRange = allies.filter(ally => {
-                const dist = MathUtils.distance2D(this.unit, ally);
-                return dist <= this.unit.attackRange;
-            });
-            
-            if (alliesInRange.length > 0) {
-                // Heal allies in range
-                this.healAllies(allies, currentTime);
-            } else {
-                // No wounded allies in range, move forward
-                MovementSystem.moveTowardsBase(this.unit, deltaTime, battleContext.battleWidth);
-            }
+        if (alliesInRange.length > 0) {
+            // Heal allies in range while continuing to move forward
+            this.healAllies(allies, currentTime);
         }
     }
     

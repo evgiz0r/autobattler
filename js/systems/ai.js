@@ -79,6 +79,27 @@ function initializeAIStrategy(forceStrategy = null) {
     return strategy;
 }
 
+function initializePlayerAIStrategy(forceStrategy = null) {
+    const strategies = Object.keys(AI_STRATEGIES);
+    let chosenKey;
+    
+    if (forceStrategy && AI_STRATEGIES[forceStrategy]) {
+        chosenKey = forceStrategy;
+    } else {
+        chosenKey = strategies[Math.floor(Math.random() * strategies.length)];
+    }
+    
+    const strategy = AI_STRATEGIES[chosenKey];
+    
+    gameState.player.strategy = {
+        key: chosenKey,
+        ...strategy
+    };
+    
+    console.log(`Player AI Strategy: ${strategy.name} - ${strategy.description}`);
+    return strategy;
+}
+
 function aiPurchaseUnits() {
     // Check AI unit count
     const aiTemplateUnits = gameState.units.filter(u => 

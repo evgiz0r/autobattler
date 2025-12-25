@@ -3,6 +3,11 @@
 const SoundSystem = {
     audioContext: null,
     enabled: true,
+    lastSoundTimes: {
+        hit: 0,
+        death: 0,
+        round: 0
+    },
     
     init() {
         // Create AudioContext on first user interaction
@@ -39,8 +44,15 @@ const SoundSystem = {
         if (!this.enabled) return;
         this.init();
         
-        // Play short percussive hit
+        // Throttle hit sounds at high game speeds (min 30ms between hits in real time)
         const now = this.audioContext.currentTime;
+        const minInterval = 0.03; // 30ms minimum between hit sounds
+        if (now - this.lastSoundTimes.hit < minInterval) {
+            return; // Skip this sound, too soon after last one
+        }
+        this.lastSoundTimes.hit = now;
+        
+        // Play short percussive hit
         const oscillator = this.audioContext.createOscillator();
         const gainNode = this.audioContext.createGain();
         

@@ -2,7 +2,8 @@
 const GAME_CONFIG = {
     STARTING_GOLD: 50,
     STARTING_HEALTH: 100,
-    ROUND_DURATION: 10, // seconds
+    ROUND_DURATION: 10, // seconds for build phase
+    BATTLE_DURATION: 15, // seconds for battle phase
     MAX_UNITS_PER_ZONE: 999, // Essentially unlimited
     MIN_UNIT_DISTANCE: 25,
     UPGRADE_HP_MULTIPLIER: 1.05, // 105% HP per upgrade (5% increase)
@@ -46,10 +47,14 @@ const gameState = {
     },
     round: 0,
     roundTimer: GAME_CONFIG.ROUND_DURATION,
+    roundStartTime: 0,
     isRoundActive: false,
+    playerUnitsSpawned: 0,
+    aiUnitsSpawned: 0,
     units: [],
     projectiles: [],
     lastUpdateTime: 0,
+    gameTime: 0, // Accumulated game time affected by speed multiplier
     selectedUnitType: null,
     passiveGoldTimer: 0,
     isPaused: false,
@@ -61,6 +66,7 @@ const gameState = {
     isAIvsAI: false, // AI vs AI mode
     infiniteMode: false, // Infinite mode - game doesn't end when lives reach 0
     selectedAIStrategy: null, // Selected enemy AI strategy (null = random)
+    selectedPlayerAIStrategy: null, // Selected player AI strategy for AI vs AI mode (null = random)
     gameSpeed: 1 // Game speed multiplier (1 = normal, 2 = 2x, 3 = 3x)
 };
 

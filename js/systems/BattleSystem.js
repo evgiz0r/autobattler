@@ -99,6 +99,36 @@ const BattleSystem = {
         });
     },
     
+    // Check if round should end
+    checkRoundEnd() {
+        // Only check if round is active
+        if (!gameState.isRoundActive) return;
+        
+        // Get living battle units by owner
+        const livingBattleUnits = gameState.units.filter(u => u.isBattleUnit && !u.isDead);
+        
+        const playerUnits = livingBattleUnits.filter(u => u.owner === 'player');
+        const aiUnits = livingBattleUnits.filter(u => u.owner === 'ai');
+        
+        // Only end round if at least one side has no living units AND the other side exists
+        const shouldEndRound = (playerUnits.length === 0 && aiUnits.length > 0) || 
+                               (aiUnits.length === 0 && playerUnits.length > 0) ||
+                               (playerUnits.length === 0 && aiUnits.length === 0);
+        
+        if (shouldEndRound) {
+            // Determine winner and deal damage
+            if (playerUnits.length === 0 && aiUnits.length > 0) {
+                // AI wins - damage player
+                gameState.player.health -= aiUnits.length;
+            } else if (aiUnits.length === 0 && playerUnits.length > 0) {
+                // Player wins - damage AI
+                gameState.ai.health -= playerUnits.length;
+            }
+            
+            endRound();
+        }
+    },
+    
     // Check if game is over
     checkGameOver() {
         // Skip game over check if infinite mode is enabled
@@ -121,7 +151,7 @@ const BattleSystem = {
                 messageDiv.style.transform = 'translate(-50%, -50%)';
                 
                 // Track pause time for all units
-                const now = Date.now();
+                const now = gameState.gameTime;
                 gameState.units.forEach(unit => {
                     unit.lastPauseStart = now;
                 });

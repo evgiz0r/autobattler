@@ -14,7 +14,7 @@ class RangedBehavior extends UnitBehavior {
         }
         
         if (!this.unit.target) {
-            this.unit.target = this.findTarget(battleContext);
+            this.unit.target = this.findTarget(battleContext, currentTime);
         }
         
         if (!this.unit.target) {
@@ -32,10 +32,10 @@ class RangedBehavior extends UnitBehavior {
         }
     }
     
-    findTarget(battleContext) {
+    findTarget(battleContext, currentTime) {
         const enemies = battleContext.getEnemies(this.unit.owner);
         // Filter out invulnerable enemies
-        const targetableEnemies = enemies.filter(e => !e.isInvulnerable(performance.now()));
+        const targetableEnemies = enemies.filter(e => !e.isInvulnerable(currentTime));
         return CombatSystem.findClosestEnemy(this.unit, targetableEnemies);
     }
 }

@@ -21,7 +21,6 @@
                     <button class="speed-btn" data-speed="5">x5</button>
                     <button class="speed-btn" data-speed="10">x10</button>
                 </div>
-                <button id="ai-vs-ai-btn" class="control-btn">AI vs AI</button>
                 <button id="infinite-mode-btn" class="control-btn">Infinite Mode: OFF</button>
                 <button id="target-lines-btn" class="control-btn">Hide Target Lines</button>
                 <button id="sound-toggle-btn" class="control-btn">Sound: ON</button>
@@ -42,7 +41,7 @@
                     </div>
                     <div>
                         <label style="font-size: 10px; display: block; margin-bottom: 3px;">Enemy AI:</label>
-                    <div id="ai-strategy-selector" style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px;">
+                    <div id="ai-strategy-selector" style="display: flex; flex-wrap: wrap; gap: 3px;">
                         <button class="ai-strategy-btn active" data-strategy="RANDOM">Random</button>
                         <button class="ai-strategy-btn" data-strategy="SPAM_ONLY">Swarm</button>
                         <button class="ai-strategy-btn" data-strategy="AGGRESSIVE_UPGRADE">Perfectionist</button>
@@ -51,6 +50,22 @@
                         <button class="ai-strategy-btn" data-strategy="CASTER_SPECIALIST">Archmage</button>
                         <button class="ai-strategy-btn" data-strategy="SUPPORT_SPECIALIST">Guardian</button>
                         <button class="ai-strategy-btn" data-strategy="NOOB">Noob</button>
+                    </div>
+                </div>
+                <div style="margin-top: 8px;">
+                    <button id="ai-vs-ai-btn" class="control-btn">AI vs AI: OFF</button>
+                </div>
+                <div id="player-ai-selector-container" style="margin-top: 8px;">
+                    <label style="font-size: 10px; display: block; margin-bottom: 3px;">Player AI:</label>
+                    <div id="player-ai-strategy-selector" style="display: flex; flex-wrap: wrap; gap: 3px;">
+                        <button class="player-ai-strategy-btn active" data-strategy="RANDOM">Random</button>
+                        <button class="player-ai-strategy-btn" data-strategy="SPAM_ONLY">Swarm</button>
+                        <button class="player-ai-strategy-btn" data-strategy="AGGRESSIVE_UPGRADE">Perfectionist</button>
+                        <button class="player-ai-strategy-btn" data-strategy="RANGED_SPECIALIST">Sniper</button>
+                        <button class="player-ai-strategy-btn" data-strategy="MELEE_SPECIALIST">Juggernaut</button>
+                        <button class="player-ai-strategy-btn" data-strategy="CASTER_SPECIALIST">Archmage</button>
+                        <button class="player-ai-strategy-btn" data-strategy="SUPPORT_SPECIALIST">Guardian</button>
+                        <button class="player-ai-strategy-btn" data-strategy="NOOB">Noob</button>
                     </div>
                 </div>
             </div>
@@ -74,6 +89,7 @@
                 <div class="battle-info">
                     <span class="round-display">Round: <span id="round-number">0</span></span>
                     <span class="timer-display">Next: <span id="round-timer">10</span>s</span>
+                    <span class="upgrade-countdown" style="color: #2ecc71; font-size: 11px; font-weight: bold;">+1 Lvl: <span id="upgrade-countdown">3</span>r</span>
                 </div>
                 <div id="battle-zone" class="zone">
                 </div>

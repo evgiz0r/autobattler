@@ -39,7 +39,7 @@ const CombatSystem = {
         meleeEffect.style.animation = 'melee-hit 0.2s ease-out';
         DOM.battleZone.appendChild(meleeEffect);
         
-        setTimeout(() => meleeEffect.remove(), 200);
+        setTimeout(() => meleeEffect.remove(), 200 / gameState.gameSpeed);
         
         // Play hit sound
         SoundSystem.playHit();
@@ -102,7 +102,7 @@ const CombatSystem = {
         aoeEffect.style.animation = 'pulse 0.3s ease-out';
         DOM.battleZone.appendChild(aoeEffect);
         
-        setTimeout(() => aoeEffect.remove(), 300);
+        setTimeout(() => aoeEffect.remove(), 300 / gameState.gameSpeed);
         
         // Max targets based on upgrade level (minimum 3, increases with upgrades)
         const maxTargets = Math.max(3, Math.floor(unit.upgradeLevel / 2) + 3);

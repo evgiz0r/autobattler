@@ -14,8 +14,8 @@ const MovementSystem = {
             unit.x = newX;
         }
         
-        this.checkBaseCollision(unit, battleWidth);
         this.updateVisualPosition(unit);
+        this.checkBaseCollision(unit, battleWidth);
     },
     
     // Move unit horizontally towards target (maintains lane)
@@ -39,8 +39,8 @@ const MovementSystem = {
             }
         }
         
-        this.checkBaseCollision(unit, battleWidth);
         this.updateVisualPosition(unit);
+        this.checkBaseCollision(unit, battleWidth);
     },
     
     // Move unit towards target in 2D (for melee units)
@@ -79,8 +79,8 @@ const MovementSystem = {
             }
         }
         
-        this.checkBaseCollision(unit, battleWidth);
         this.updateVisualPosition(unit);
+        this.checkBaseCollision(unit, battleWidth);
     },
     
     // Check collision with friendly units
@@ -109,6 +109,7 @@ const MovementSystem = {
     // Check if unit reached enemy base
     checkBaseCollision(unit, battleWidth) {
         if (unit.owner === 'player' && unit.x >= battleWidth - 10) {
+            console.log(`BASE COLLISION: ${unit.type} at x=${unit.x.toFixed(1)}, visual=${unit.element ? unit.element.style.left : 'removed'}`);
             gameState.ai.health -= GAME_CONFIG.BASE_DAMAGE_TO_CORE;
             gameState.ai.livesLost++;
             
@@ -120,12 +121,14 @@ const MovementSystem = {
                 });
             }
             
+            console.log(`REMOVING UNIT: ${unit.type} id=${unit.id}`);
             unit.isDead = true;
             if (unit.element) {
                 unit.element.remove();
                 unit.element = null;
             }
         } else if (unit.owner === 'ai' && unit.x <= 10) {
+            console.log(`BASE COLLISION: AI ${unit.type} at x=${unit.x.toFixed(1)}, visual=${unit.element ? unit.element.style.left : 'removed'}`);
             gameState.player.health -= GAME_CONFIG.BASE_DAMAGE_TO_CORE;
             gameState.player.livesLost++;
             
@@ -137,6 +140,7 @@ const MovementSystem = {
                 });
             }
             
+            console.log(`REMOVING UNIT: AI ${unit.type} id=${unit.id}`);
             unit.isDead = true;
             if (unit.element) {
                 unit.element.remove();

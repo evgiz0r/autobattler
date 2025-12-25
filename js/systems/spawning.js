@@ -6,6 +6,7 @@ function placeUnit(unitType, x, y) {
     
     if (gameState.player.gold < definition.cost) {
         console.log('Not enough gold');
+        // Do not remove or hide the cursor preview; just return
         return;
     }
     
@@ -28,6 +29,7 @@ function placeUnit(unitType, x, y) {
         );
         if (dist < GAME_CONFIG.MIN_UNIT_DISTANCE) {
             console.log('Too close to another unit');
+            ShopManager.deselectUnit();
             return;
         }
     }
@@ -38,6 +40,8 @@ function placeUnit(unitType, x, y) {
     gameState.units.push(newUnit);
     createUnitElement(newUnit, DOM.playerZone);
     
+    
+    // Keep the cursor preview visible and following the cursor after placement
     // Mark first unit as placed
     if (!gameState.firstUnitPlaced) {
         gameState.firstUnitPlaced = true;
@@ -59,11 +63,7 @@ function placeUnit(unitType, x, y) {
 function startRound() {
     gameState.isRoundActive = true;
     gameState.round++;
-    
-    // Disable AI strategy buttons and AI vs AI button during gameplay
-    document.querySelectorAll('.ai-strategy-btn').forEach(btn => btn.disabled = true);
-    const aiVsAiBtn = document.getElementById('ai-vs-ai-btn');
-    if (aiVsAiBtn) aiVsAiBtn.disabled = true;
+    gameState.roundStartTime = gameState.gameTime; // Track when round started
     
     // Play round begin sound
     SoundSystem.playRoundBegin();
@@ -73,21 +73,25 @@ function startRound() {
         u.element && (u.element.parentElement === DOM.playerZone || u.element.parentElement === DOM.aiZone)
     );
     
+    // Track initial unit counts for each side
+    let playerSpawnCount = 0;
+    let aiSpawnCount = 0;
+    
     templateUnits.forEach(templateUnit => {
         // Get base definition for unit type
         const def = UNIT_DEFINITIONS[templateUnit.type];
         
         if (def) {
-            // Spawn maintaining X position relative to their zone, not all at edge
-            // This prevents all units from spawning at the same X coordinate
+            // Spawn units at the edge of their respective sides
             let spawnX;
             if (templateUnit.owner === 'player') {
-                // Player units spawn at their template X position
-                spawnX = templateUnit.x;
+                // Player units spawn at left edge (0-50 range based on template position)
+                const relativePos = (templateUnit.x / DOM.playerZone.offsetWidth) * 50;
+                spawnX = relativePos;
             } else {
-                // AI units spawn at battlefield width minus their distance from right edge
-                const distanceFromRightEdge = DOM.aiZone.offsetWidth - templateUnit.x;
-                spawnX = DOM.battleZone.offsetWidth - distanceFromRightEdge;
+                // AI units spawn at right edge (battleWidth-50 to battleWidth range)
+                const relativePos = (templateUnit.x / DOM.aiZone.offsetWidth) * 50;
+                spawnX = DOM.battleZone.offsetWidth - relativePos;
             }
             
             const battleUnit = new Unit(
@@ -97,22 +101,55 @@ function startRound() {
                 templateUnit.y
             );
             
+            // Mark as battle unit
+            battleUnit.isBattleUnit = true;
+            
+            // Reset createdAt for battle units (don't inherit template's old timestamp)
+            battleUnit.createdAt = gameState.gameTime;
+            
             // Set initial cooldown (50-100% already elapsed) so units don't instant-attack
+            // Scale the cooldown by game speed so it's consistent across different speeds
             const cooldownProgress = 0.5 + Math.random() * 0.5; // Random value between 0.5 and 1.0
-            battleUnit.lastAttackTime = performance.now() - (battleUnit.attackCooldown * cooldownProgress);
+            const effectiveCooldown = battleUnit.attackCooldown / gameState.gameSpeed;
+            battleUnit.lastAttackTime = gameState.gameTime - (effectiveCooldown * cooldownProgress);
             
             // Set spawn time for invulnerability period
-            battleUnit.spawnTime = performance.now();
+            battleUnit.spawnTime = gameState.gameTime;
             
             gameState.units.push(battleUnit);
             createUnitElement(battleUnit, DOM.battleZone);
+            
+            // Count spawned units
+            if (templateUnit.owner === 'player') {
+                playerSpawnCount++;
+            } else {
+                aiSpawnCount++;
+            }
         }
     });
+    
+    // Store spawn counts for round end checking
+    gameState.playerUnitsSpawned = playerSpawnCount;
+    gameState.aiUnitsSpawned = aiSpawnCount;
+    
+    // Set battle timer
+    gameState.roundTimer = GAME_CONFIG.BATTLE_DURATION;
     
     updateUI();
 }
 
 function endRound() {
+    // Mark round as inactive
+    gameState.isRoundActive = false;
+    
+    // Keep battle units alive - just remove dead ones
+    gameState.units = gameState.units.filter(unit => {
+        if (unit.isDead && unit.element === null) {
+            return false;
+        }
+        return true;
+    });
+    
     awardRoundGold();
     
     // Auto-upgrade all units every 3 rounds (regardless of cost)
@@ -134,3 +171,4 @@ function endRound() {
     gameState.roundTimer = GAME_CONFIG.ROUND_DURATION;
     updateUI();
 }
+    

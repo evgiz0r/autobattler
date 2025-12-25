@@ -8,6 +8,7 @@ const ProjectileSystem = {
             target: target,
             damage: unit.damage,
             owner: unit.owner,
+            pierceCount: unit.pierceCount || 0,
             element: null,
             createdAt: performance.now()
         };
@@ -33,7 +34,7 @@ const ProjectileSystem = {
                 proj.spawnX = proj.x;
                 proj.spawnY = proj.y;
                 proj.hitUnits = new Set();
-                proj.pierceLimit = proj.tier + 1;
+                proj.pierceLimit = proj.pierceCount + 1; // +1 for the first hit
                 proj.hitCount = 0;
             }
             
