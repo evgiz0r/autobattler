@@ -116,15 +116,7 @@ const BattleSystem = {
                                (playerUnits.length === 0 && aiUnits.length === 0);
         
         if (shouldEndRound) {
-            // Determine winner and deal damage
-            if (playerUnits.length === 0 && aiUnits.length > 0) {
-                // AI wins - damage player
-                gameState.player.health -= aiUnits.length;
-            } else if (aiUnits.length === 0 && playerUnits.length > 0) {
-                // Player wins - damage AI
-                gameState.ai.health -= playerUnits.length;
-            }
-            
+            // End the round; damage from base collisions only (no extra end-of-round damage)
             endRound();
         }
     },

@@ -49,6 +49,11 @@ function restartGame() {
     gameState.passiveGoldTimer = 0;
     // In AI vs AI mode, auto-start the game
     gameState.firstUnitPlaced = gameState.isAIvsAI;
+
+    // Ensure the game is not paused after a restart so AI vs AI will run
+    gameState.isPaused = false;
+    const pauseBtn = document.getElementById('pause-btn');
+    if (pauseBtn) pauseBtn.textContent = 'Pause';
     
     // Clear all units
     gameState.units.forEach(unit => {

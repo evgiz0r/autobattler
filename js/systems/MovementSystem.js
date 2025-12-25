@@ -114,19 +114,11 @@ const MovementSystem = {
         if (unit.isDead || unit._baseCollisionHandled) return;
         if (unit.owner === 'player' && unit.x >= battleWidth - 10) {
             console.log(`BASE COLLISION: ${unit.type} at x=${unit.x.toFixed(1)}, visual=${unit.element ? unit.element.style.left : 'removed'}`);
-            // Mark handled and apply base damage and lives lost once immediately
+            // Mark handled and apply base damage and a single life lost
             unit._baseCollisionHandled = true;
             gameState.ai.health -= GAME_CONFIG.BASE_DAMAGE_TO_CORE;
             gameState.ai.livesLost++;
-
-            // If melee unit, apply a second life loss (and damage) after a short delay
-            if (unit.type === 'melee') {
-                setTimeout(() => {
-                    console.log(`MELEE PENALTY: additional life lost from melee unit id=${unit.id}`);
-                    gameState.ai.health -= GAME_CONFIG.BASE_DAMAGE_TO_CORE;
-                    gameState.ai.livesLost++;
-                }, 300);
-            }
+            console.log(`LIFE LOSS: AI hit by ${unit.type} (owner=${unit.owner}, id=${unit.id}). -1 health (now ${gameState.ai.health}), livesLost=${gameState.ai.livesLost}`);
             
             // Comeback mechanic: every 5 lives lost, upgrade all units
             if (gameState.ai.livesLost % 5 === 0) {
@@ -144,18 +136,11 @@ const MovementSystem = {
             }
         } else if (unit.owner === 'ai' && unit.x <= 10) {
             console.log(`BASE COLLISION: AI ${unit.type} at x=${unit.x.toFixed(1)}, visual=${unit.element ? unit.element.style.left : 'removed'}`);
-            // Apply base damage and lives lost once immediately
+            // Mark handled and apply base damage and a single life lost
+            unit._baseCollisionHandled = true;
             gameState.player.health -= GAME_CONFIG.BASE_DAMAGE_TO_CORE;
             gameState.player.livesLost++;
-
-            // If melee unit, apply a second life loss (and damage) after a short delay
-            if (unit.type === 'melee') {
-                setTimeout(() => {
-                    console.log(`MELEE PENALTY: additional life lost from AI melee unit id=${unit.id}`);
-                    gameState.player.health -= GAME_CONFIG.BASE_DAMAGE_TO_CORE;
-                    gameState.player.livesLost++;
-                }, 300);
-            }
+            console.log(`LIFE LOSS: Player hit by ${unit.type} (owner=${unit.owner}, id=${unit.id}). -1 health (now ${gameState.player.health}), livesLost=${gameState.player.livesLost}`);
             
             // Comeback mechanic: every 5 lives lost, upgrade all units
             if (gameState.player.livesLost % 5 === 0) {

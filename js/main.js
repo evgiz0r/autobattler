@@ -83,19 +83,7 @@ function gameLoop(timestamp) {
                 if (!gameState.isRoundActive) {
                     startRound();
                 } else {
-                    // Battle time expired, end round
-                    const livingBattleUnits = gameState.units.filter(u => u.isBattleUnit && !u.isDead);
-                    const playerUnits = livingBattleUnits.filter(u => u.owner === 'player');
-                    const aiUnits = livingBattleUnits.filter(u => u.owner === 'ai');
-
-                    // Deal damage based on remaining units
-                    if (aiUnits.length > 0) {
-                        gameState.player.health -= aiUnits.length;
-                    }
-                    if (playerUnits.length > 0) {
-                        gameState.ai.health -= playerUnits.length;
-                    }
-
+                    // Battle time expired - end round without applying extra damage
                     endRound();
                 }
             }
