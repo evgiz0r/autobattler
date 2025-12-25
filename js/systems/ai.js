@@ -69,15 +69,31 @@ function aiPurchaseUnits() {
         u.element && u.element.parentElement === DOM.aiZone
     );
     
-    if (aiTemplateUnits.length >= GAME_CONFIG.MAX_UNITS_PER_ZONE) return;
+    const boardIsFull = aiTemplateUnits.length >= GAME_CONFIG.MAX_UNITS_PER_ZONE;
     
     // Get AI strategy
     const strategy = gameState.ai.strategy || initializeAIStrategy();
     
-    // Randomly decide to upgrade based on strategy
-    if (Math.random() < strategy.upgradeChance) {
-        tryAIUpgrade(strategy);
+    // Aggressive upgrading when gold is high or board is full
+    const goldAmount = gameState.ai.gold;
+    let upgradeAttempts = 1;
+    
+    // Scale upgrade attempts based on gold and board state
+    if (goldAmount > 500 || boardIsFull) {
+        upgradeAttempts = Math.floor(goldAmount / 200); // More attempts with more gold
+        upgradeAttempts = Math.min(upgradeAttempts, 10); // Cap at 10 attempts
     }
+    
+    // Try multiple upgrades if we have lots of gold
+    for (let i = 0; i < upgradeAttempts; i++) {
+        const shouldUpgrade = boardIsFull || Math.random() < strategy.upgradeChance;
+        if (shouldUpgrade) {
+            tryAIUpgrade(strategy);
+        }
+    }
+    
+    // Don't try to buy units if board is full
+    if (boardIsFull) return;
     
     // Select unit type based on strategy
     let unitType;
@@ -145,7 +161,8 @@ function tryAIUpgrade(strategy) {
     }
     
     const definition = UNIT_DEFINITIONS[typeToUpgrade];
-    const upgradeCost = definition.cost; // Always costs 1 unit
+    const upgradeLevel = gameState.ai.upgradeLevels[typeToUpgrade] || 0;
+    const upgradeCost = ShopManager.getUpgradeCost(typeToUpgrade, upgradeLevel);
     
     // Use higher upgrade chance for preferred unit if applicable
     const effectiveChance = isPreferredUpgrade && strategy.preferredUpgradeChance 
@@ -155,7 +172,7 @@ function tryAIUpgrade(strategy) {
     if (gameState.ai.gold >= upgradeCost && Math.random() < effectiveChance) {
         gameState.ai.gold -= upgradeCost;
         gameState.ai.upgradeLevels[typeToUpgrade]++;
-        console.log(`AI upgraded ${typeToUpgrade} to level ${gameState.ai.upgradeLevels[typeToUpgrade]}`);
+        console.log(`AI upgraded ${typeToUpgrade} to level ${gameState.ai.upgradeLevels[typeToUpgrade]} for ${upgradeCost}g`);
         
         // Update AI shop display
         if (window.updateUpgradeButtons) {
@@ -212,15 +229,31 @@ function playerAIPurchaseUnits() {
         u.element && u.element.parentElement === DOM.playerZone
     );
     
-    if (playerTemplateUnits.length >= GAME_CONFIG.MAX_UNITS_PER_ZONE) return;
+    const boardIsFull = playerTemplateUnits.length >= GAME_CONFIG.MAX_UNITS_PER_ZONE;
     
     // Use player's own strategy
     const strategy = gameState.player.strategy || gameState.ai.strategy || initializeAIStrategy();
     
-    // Randomly decide to upgrade based on strategy
-    if (Math.random() < strategy.upgradeChance) {
-        tryPlayerAIUpgrade(strategy);
+    // Aggressive upgrading when gold is high or board is full
+    const goldAmount = gameState.player.gold;
+    let upgradeAttempts = 1;
+    
+    // Scale upgrade attempts based on gold and board state
+    if (goldAmount > 500 || boardIsFull) {
+        upgradeAttempts = Math.floor(goldAmount / 200); // More attempts with more gold
+        upgradeAttempts = Math.min(upgradeAttempts, 10); // Cap at 10 attempts
     }
+    
+    // Try multiple upgrades if we have lots of gold
+    for (let i = 0; i < upgradeAttempts; i++) {
+        const shouldUpgrade = boardIsFull || Math.random() < strategy.upgradeChance;
+        if (shouldUpgrade) {
+            tryPlayerAIUpgrade(strategy);
+        }
+    }
+    
+    // Don't try to buy units if board is full
+    if (boardIsFull) return;
     
     // Select unit type based on strategy
     let unitType;
@@ -286,7 +319,8 @@ function tryPlayerAIUpgrade(strategy) {
     }
     
     const definition = UNIT_DEFINITIONS[typeToUpgrade];
-    const upgradeCost = definition.cost; // Always costs 1 unit
+    const upgradeLevel = gameState.player.upgradeLevels[typeToUpgrade] || 0;
+    const upgradeCost = ShopManager.getUpgradeCost(typeToUpgrade, upgradeLevel);
     
     // Use higher upgrade chance for preferred unit if applicable
     const effectiveChance = isPreferredUpgrade && strategy.preferredUpgradeChance 
@@ -296,7 +330,7 @@ function tryPlayerAIUpgrade(strategy) {
     if (gameState.player.gold >= upgradeCost && Math.random() < effectiveChance) {
         gameState.player.gold -= upgradeCost;
         gameState.player.upgradeLevels[typeToUpgrade]++;
-        console.log(`Player AI upgraded ${typeToUpgrade} to level ${gameState.player.upgradeLevels[typeToUpgrade]}`);
+        console.log(`Player AI upgraded ${typeToUpgrade} to level ${gameState.player.upgradeLevels[typeToUpgrade]} for ${upgradeCost}g`);
         
         // Update UI
         if (window.updateUpgradeButtons) {
