@@ -46,7 +46,8 @@ function gameLoop(timestamp) {
         
         // Initialize AI strategy if not set and game started
         if (gameState.firstUnitPlaced && !gameState.ai.strategy) {
-            initializeAIStrategy(gameState.selectedAIStrategy || null);
+            const strategy = initializeAIStrategy(gameState.selectedAIStrategy || null);
+            displayAIStrategy(strategy);
         }
         
         // AI buying - only after game starts (increases aggression with rounds)

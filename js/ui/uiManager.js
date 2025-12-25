@@ -1,9 +1,8 @@
 // UI Manager - handles UI updates and event listeners
 
 function initializeGame() {
-    // Initialize AI strategy and display its nickname
-    const strategy = initializeAIStrategy();
-    displayAIStrategy(strategy);
+    // Don't initialize AI strategy here - let user select first
+    // AI strategy will be initialized when first unit is placed
     
     // Generate shop UI dynamically
     ShopManager.generateShop();
