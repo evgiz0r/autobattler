@@ -267,6 +267,42 @@ function upgradeUnit(unitType) {
     gameState.player.gold -= upgradeCost;
     gameState.player.upgradeLevels[unitType]++;
     
+    // Upgrade existing units of this type in player zone
+    const playerUnits = gameState.units.filter(u => 
+        u.type === unitType && 
+        u.owner === 'player' && 
+        u.element && 
+        u.element.parentElement === DOM.playerZone
+    );
+    playerUnits.forEach(unit => {
+        const newLevel = gameState.player.upgradeLevels[unitType];
+        const hpMult = Math.pow(GAME_CONFIG.UPGRADE_HP_MULTIPLIER, newLevel);
+        const dmgMult = Math.pow(GAME_CONFIG.UPGRADE_DAMAGE_MULTIPLIER, newLevel);
+        const cooldownMult = Math.max(Math.pow(GAME_CONFIG.UPGRADE_COOLDOWN_MULTIPLIER, newLevel), GAME_CONFIG.MIN_COOLDOWN_MULTIPLIER);
+        const aoeMult = Math.min(Math.pow(GAME_CONFIG.UPGRADE_AOE_MULTIPLIER, newLevel), GAME_CONFIG.MAX_AOE_MULTIPLIER);
+        
+        // Update unit stats
+        const hpPercent = unit.hp / unit.maxHp; // Preserve HP percentage
+        unit.maxHp = Math.round(definition.maxHp * hpMult);
+        unit.hp = Math.round(unit.maxHp * hpPercent);
+        unit.damage = Math.round(definition.damage * dmgMult);
+        unit.healAmount = Math.round((definition.healAmount || 0) * dmgMult);
+        unit.attackCooldown = Math.round(definition.attackCooldown * cooldownMult);
+        unit.aoeRadius = Math.round((definition.aoeRadius || 0) * aoeMult);
+        unit.upgradeLevel = newLevel;
+        
+        // Update healer targets
+        if (definition.maxTargets) {
+            const bonusTargets = Math.floor(newLevel / 5);
+            unit.maxTargets = Math.min(definition.maxTargets + bonusTargets, 5);
+        }
+        
+        // Update ranged pierce
+        if (unitType === 'ranged') {
+            unit.pierceCount = Math.min(Math.floor(newLevel / 5), 2);
+        }
+    });
+    
     // Update shop display
     updateUpgradeButtons();
     updateUI();
@@ -336,6 +372,11 @@ function setupEventListeners() {
             const x = e.clientX - rect.left - 10; // Center the unit (half of 20px width)
             const y = e.clientY - rect.top - 10; // Center the unit (half of 20px height)
             placeUnit(gameState.selectedUnitType, x, y);
+            
+            // Temporarily hide the preview to avoid blur/overlap with placed unit
+            if (gameState.cursorPreview) {
+                gameState.cursorPreview.style.display = 'none';
+            }
         }
     });
     

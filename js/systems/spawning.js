@@ -96,16 +96,14 @@ function startRound() {
         const def = UNIT_DEFINITIONS[templateUnit.type];
         
         if (def) {
-            // Spawn units at the edge of their respective sides
+            // Spawn units at the same positions as in their template zones
             let spawnX;
             if (templateUnit.owner === 'player') {
-                // Player units spawn at left edge (0-50 range based on template position)
-                const relativePos = (templateUnit.x / DOM.playerZone.offsetWidth) * 50;
-                spawnX = relativePos;
+                // Player units spawn at same X position (left side)
+                spawnX = templateUnit.x;
             } else {
-                // AI units spawn at right edge (battleWidth-50 to battleWidth range)
-                const relativePos = (templateUnit.x / DOM.aiZone.offsetWidth) * 50;
-                spawnX = DOM.battleZone.offsetWidth - relativePos;
+                // AI units spawn at same relative position from the right edge
+                spawnX = DOM.battleZone.offsetWidth - DOM.aiZone.offsetWidth + templateUnit.x;
             }
             
             const battleUnit = new Unit(

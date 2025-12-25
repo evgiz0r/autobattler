@@ -18,7 +18,7 @@ const GAME_CONFIG = {
     ROUND_GOLD_PER_ROUND: 2,
     KILL_GOLD_BASE: 1,
     KILL_GOLD_PER_TIER: 2,
-    AI_BUY_CHANCE: 0.015, // per frame - base chance
+    AI_BUY_CHANCE: 0.04, // per frame - base chance (increased for early rounds)
     AI_BUY_CHANCE_PER_ROUND: 0.002, // additional chance per round (gets more aggressive)
     PROJECTILE_SPEED: 200,
     PROJECTILE_MAX_AGE: 5000, // ms

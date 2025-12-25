@@ -25,7 +25,9 @@ function gameLoop(timestamp) {
     }
     
     const rawDeltaTime = timestamp - gameState.lastUpdateTime;
-    const deltaTime = rawDeltaTime * gameState.gameSpeed; // Apply speed multiplier
+    // Cap delta time to prevent huge jumps when tab loses focus
+    const cappedRawDeltaTime = Math.min(rawDeltaTime, 100); // Cap at 100ms
+    const deltaTime = cappedRawDeltaTime * gameState.gameSpeed; // Apply speed multiplier
     gameState.lastUpdateTime = timestamp;
     
     // Accumulate game time (affected by speed multiplier)
@@ -42,6 +44,9 @@ function gameLoop(timestamp) {
         
         // Clean up dead units
         cleanupDeadUnits();
+        
+        // Clean up expired units and update timers
+        cleanupExpiredUnits();
         
         // Clean up old projectiles
         ProjectileSystem.cleanupOldProjectiles(timestamp);
