@@ -331,8 +331,15 @@ function setupEventListeners() {
             console.log('AI Strategy button clicked:', selectedStrategy);
             if (selectedStrategy === 'RANDOM') {
                 gameState.selectedAIStrategy = null;
+                // Update label to show random
+                const aiZoneLabel = document.getElementById('ai-zone-label');
+                if (aiZoneLabel) aiZoneLabel.textContent = 'AI (Random)';
             } else {
                 gameState.selectedAIStrategy = selectedStrategy;
+                // Update label to show selected strategy name
+                const strategyName = AI_STRATEGIES[selectedStrategy]?.name || 'AI';
+                const aiZoneLabel = document.getElementById('ai-zone-label');
+                if (aiZoneLabel) aiZoneLabel.textContent = strategyName;
             }
             
             // Update active button styling
