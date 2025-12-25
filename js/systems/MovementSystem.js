@@ -1,7 +1,8 @@
 // Movement system for unit movement logic
 const MovementSystem = {
     // Move unit towards enemy base (horizontal only)
-    moveTowardsBase(unit, deltaTime, battleWidth) {
+    moveTowardsBase(unit, deltaTime, battleWidth) {     
+
         let newX = unit.x;
         
         if (unit.owner === 'player') {
@@ -19,7 +20,7 @@ const MovementSystem = {
     },
     
     // Move unit horizontally towards target (maintains lane)
-    moveHorizontally(unit, deltaTime, battleWidth, target = null) {
+    moveHorizontally(unit, deltaTime, battleWidth, target = null) {        
         let newX = unit.x;
         
         if (unit.owner === 'player') {
@@ -44,7 +45,8 @@ const MovementSystem = {
     },
     
     // Move unit towards target in 2D (for melee units)
-    moveTowardsTarget(unit, target, deltaTime, battleWidth) {
+    moveTowardsTarget(unit, target, deltaTime, battleWidth) {        
+
         const dx = target.x - unit.x;
         const dy = target.y - unit.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
@@ -108,10 +110,23 @@ const MovementSystem = {
     
     // Check if unit reached enemy base
     checkBaseCollision(unit, battleWidth) {
+        // Prevent handling the same unit multiple times (avoids duplicate life loss)
+        if (unit.isDead || unit._baseCollisionHandled) return;
         if (unit.owner === 'player' && unit.x >= battleWidth - 10) {
             console.log(`BASE COLLISION: ${unit.type} at x=${unit.x.toFixed(1)}, visual=${unit.element ? unit.element.style.left : 'removed'}`);
+            // Mark handled and apply base damage and lives lost once immediately
+            unit._baseCollisionHandled = true;
             gameState.ai.health -= GAME_CONFIG.BASE_DAMAGE_TO_CORE;
             gameState.ai.livesLost++;
+
+            // If melee unit, apply a second life loss (and damage) after a short delay
+            if (unit.type === 'melee') {
+                setTimeout(() => {
+                    console.log(`MELEE PENALTY: additional life lost from melee unit id=${unit.id}`);
+                    gameState.ai.health -= GAME_CONFIG.BASE_DAMAGE_TO_CORE;
+                    gameState.ai.livesLost++;
+                }, 300);
+            }
             
             // Comeback mechanic: every 5 lives lost, upgrade all units
             if (gameState.ai.livesLost % 5 === 0) {
@@ -129,8 +144,18 @@ const MovementSystem = {
             }
         } else if (unit.owner === 'ai' && unit.x <= 10) {
             console.log(`BASE COLLISION: AI ${unit.type} at x=${unit.x.toFixed(1)}, visual=${unit.element ? unit.element.style.left : 'removed'}`);
+            // Apply base damage and lives lost once immediately
             gameState.player.health -= GAME_CONFIG.BASE_DAMAGE_TO_CORE;
             gameState.player.livesLost++;
+
+            // If melee unit, apply a second life loss (and damage) after a short delay
+            if (unit.type === 'melee') {
+                setTimeout(() => {
+                    console.log(`MELEE PENALTY: additional life lost from AI melee unit id=${unit.id}`);
+                    gameState.player.health -= GAME_CONFIG.BASE_DAMAGE_TO_CORE;
+                    gameState.player.livesLost++;
+                }, 300);
+            }
             
             // Comeback mechanic: every 5 lives lost, upgrade all units
             if (gameState.player.livesLost % 5 === 0) {
@@ -141,7 +166,7 @@ const MovementSystem = {
             }
             
             console.log(`REMOVING UNIT: AI ${unit.type} id=${unit.id}`);
-            unit.isDead = true;
+            unit.isDead = true;            
             if (unit.element) {
                 unit.element.remove();
                 unit.element = null;

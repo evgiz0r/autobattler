@@ -2,8 +2,10 @@
 const GAME_CONFIG = {
     STARTING_GOLD: 60,
     STARTING_HEALTH: 100,
-    ROUND_DURATION: 5, // seconds for build phase
-    BATTLE_DURATION: 10, // seconds for battle phase
+    // Single unified round duration (seconds)
+    ROUND_DURATION: 15,
+    // Kept for compatibility with older code; use ROUND_DURATION for timing
+    BATTLE_DURATION: 15,
     MAX_UNITS_PER_ZONE: 999, // Essentially unlimited
     MIN_UNIT_DISTANCE: 25,
     UPGRADE_HP_MULTIPLIER: 1.05, // 105% HP per upgrade (5% increase)

@@ -221,10 +221,14 @@ function tryAIUpgrade(strategy) {
     const upgradeCost = ShopManager.getUpgradeCost(typeToUpgrade, upgradeLevel);
     
     // Use higher upgrade chance for preferred unit if applicable
-    const effectiveChance = isPreferredUpgrade && strategy.preferredUpgradeChance 
+    let effectiveChance = isPreferredUpgrade && strategy.preferredUpgradeChance 
         ? strategy.preferredUpgradeChance 
         : 1.0; // Always upgrade if we decided to try
     
+    if (gameState.round < 5) {
+        effectiveChance *= 0.2; // Less upgrading in early rounds
+    }
+
     if (gameState.ai.gold >= upgradeCost && Math.random() < effectiveChance) {
         gameState.ai.gold -= upgradeCost;
         gameState.ai.upgradeLevels[typeToUpgrade]++;

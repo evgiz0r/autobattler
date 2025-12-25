@@ -68,6 +68,7 @@ function placeUnit(unitType, x, y) {
         if (economyBtn) {
             economyBtn.disabled = false;
         }
+        // First unit placed: keep build period (round 0) active for the full ROUND_DURATION
     }
     
     // Don't clear selection - keep unit selected for placing more
@@ -144,8 +145,8 @@ function startRound() {
     gameState.playerUnitsSpawned = playerSpawnCount;
     gameState.aiUnitsSpawned = aiSpawnCount;
     
-    // Set battle timer
-    gameState.roundTimer = GAME_CONFIG.BATTLE_DURATION;
+    // Set unified round timer
+    gameState.roundTimer = GAME_CONFIG.ROUND_DURATION;
     
     updateUI();
 }
@@ -182,5 +183,9 @@ function endRound() {
     
     gameState.roundTimer = GAME_CONFIG.ROUND_DURATION;
     updateUI();
+    // Automatically start the next round immediately (continuous 15s rounds)
+    setTimeout(() => {
+        startRound();
+    }, 0);
 }
     

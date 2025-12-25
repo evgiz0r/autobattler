@@ -63,45 +63,41 @@ function gameLoop(timestamp) {
             displayPlayerAIStrategy(playerStrategy);
         }
         
-        // AI buying - only after game starts and during build phase
+        // AI buying - allowed at any time (building allowed during rounds)
         // Scale buy chance by game speed so AI buys faster at higher speeds
         const baseBuyChance = GAME_CONFIG.AI_BUY_CHANCE + (gameState.round * GAME_CONFIG.AI_BUY_CHANCE_PER_ROUND);
         const aiBuyChance = baseBuyChance * gameState.gameSpeed;
-        if (gameState.firstUnitPlaced && !gameState.isRoundActive && Math.random() < aiBuyChance) {
+        if (gameState.firstUnitPlaced && Math.random() < aiBuyChance) {
             aiPurchaseUnits();
         }
-        
+
         // Player AI buying in AI vs AI mode (also scales with rounds and speed)
-        if (gameState.isAIvsAI && gameState.firstUnitPlaced && !gameState.isRoundActive && Math.random() < aiBuyChance) {
+        if (gameState.isAIvsAI && gameState.firstUnitPlaced && Math.random() < aiBuyChance) {
             playerAIPurchaseUnits();
         }
         
-        // Round timer - counts down during build phase only
-        if (gameState.firstUnitPlaced && !gameState.isRoundActive) {
+        // Unified round timer - always counts down once the game started
+        if (gameState.firstUnitPlaced) {
             gameState.roundTimer -= deltaTime / 1000;
             if (gameState.roundTimer <= 0) {
-                startRound();
-            }
-        }
-        
-        // Battle timer - counts down during active rounds
-        if (gameState.isRoundActive) {
-            gameState.roundTimer -= deltaTime / 1000;
-            if (gameState.roundTimer <= 0) {
-                // Battle time expired, end round
-                const livingBattleUnits = gameState.units.filter(u => u.isBattleUnit && !u.isDead);
-                const playerUnits = livingBattleUnits.filter(u => u.owner === 'player');
-                const aiUnits = livingBattleUnits.filter(u => u.owner === 'ai');
-                
-                // Deal damage based on remaining units
-                if (aiUnits.length > 0) {
-                    gameState.player.health -= aiUnits.length;
+                if (!gameState.isRoundActive) {
+                    startRound();
+                } else {
+                    // Battle time expired, end round
+                    const livingBattleUnits = gameState.units.filter(u => u.isBattleUnit && !u.isDead);
+                    const playerUnits = livingBattleUnits.filter(u => u.owner === 'player');
+                    const aiUnits = livingBattleUnits.filter(u => u.owner === 'ai');
+
+                    // Deal damage based on remaining units
+                    if (aiUnits.length > 0) {
+                        gameState.player.health -= aiUnits.length;
+                    }
+                    if (playerUnits.length > 0) {
+                        gameState.ai.health -= playerUnits.length;
+                    }
+
+                    endRound();
                 }
-                if (playerUnits.length > 0) {
-                    gameState.ai.health -= playerUnits.length;
-                }
-                
-                endRound();
             }
         }
     }
