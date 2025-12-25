@@ -60,7 +60,8 @@ const gameState = {
     difficulty: 'MEDIUM',
     isAIvsAI: false, // AI vs AI mode
     infiniteMode: false, // Infinite mode - game doesn't end when lives reach 0
-    selectedAIStrategy: null // Selected enemy AI strategy (null = random)
+    selectedAIStrategy: null, // Selected enemy AI strategy (null = random)
+    gameSpeed: 1 // Game speed multiplier (1 = normal, 2 = 2x, 3 = 3x)
 };
 
 // DOM element references

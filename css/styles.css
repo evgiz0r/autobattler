@@ -220,6 +220,28 @@ body {
     cursor: not-allowed;
 }
 
+.speed-btn {
+    background: #7f8c8d;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: bold;
+    transition: all 0.2s;
+    flex: 1;
+}
+
+.speed-btn:hover {
+    background: #95a5a6;
+}
+
+.speed-btn.active {
+    background: #27ae60;
+    box-shadow: 0 0 8px rgba(39, 174, 96, 0.6);
+}
+
 .battle-info {
     display: flex;
     gap: 15px;

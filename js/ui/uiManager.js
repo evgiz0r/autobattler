@@ -324,6 +324,18 @@ function setupEventListeners() {
         location.reload();
     });
     
+    // Speed control buttons
+    document.querySelectorAll('.speed-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const speed = parseInt(btn.dataset.speed);
+            gameState.gameSpeed = speed;
+            
+            // Update active button styling
+            document.querySelectorAll('.speed-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        });
+    });
+    
     // AI strategy selector
     document.querySelectorAll('.ai-strategy-btn').forEach(btn => {
         btn.addEventListener('click', () => {

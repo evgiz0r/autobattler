@@ -24,7 +24,8 @@ function gameLoop(timestamp) {
         gameState.lastUpdateTime = timestamp;
     }
     
-    const deltaTime = timestamp - gameState.lastUpdateTime;
+    const rawDeltaTime = timestamp - gameState.lastUpdateTime;
+    const deltaTime = rawDeltaTime * gameState.gameSpeed; // Apply speed multiplier
     gameState.lastUpdateTime = timestamp;
     
     if (!gameState.isPaused) {

@@ -50,7 +50,8 @@ const AI_STRATEGIES = {
     NOOB: {
         name: 'The Noob',
         upgradeChance: 0.02, // Rarely upgrades (2%)
-        preferredUnit: null, // Random unit selection
+        preferredUnit: 'melee', // Mostly builds melee (bad strategy)
+        preferredChance: 0.7, // 70% melee, 30% random
         buyChanceMultiplier: 0.3, // Buys 3x less frequently
         badPlacement: true, // Places units randomly without strategy
         description: 'Plays poorly - bad placement, rarely upgrades, slow spending'
@@ -332,6 +333,14 @@ function playerAIPurchaseUnits() {
                     unitType = strategy.secondaryUnit;
                 } else {
                     unitType = strategy.preferredUnit;
+                }
+            } else if (strategy.preferredChance) {
+                // Noob-style: mostly preferred, rest random
+                if (Math.random() < strategy.preferredChance) {
+                    unitType = strategy.preferredUnit;
+                } else {
+                    const types = ['melee', 'ranged', 'caster', 'healer'];
+                    unitType = types[Math.floor(Math.random() * types.length)];
                 }
             } else {
                 // 80% preferred unit, 20% random
