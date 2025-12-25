@@ -8,7 +8,6 @@ const ProjectileSystem = {
             target: target,
             damage: unit.damage,
             owner: unit.owner,
-            tier: unit.tier,
             element: null,
             createdAt: performance.now()
         };

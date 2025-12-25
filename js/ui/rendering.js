@@ -2,7 +2,7 @@
 
 function createUnitElement(unit, container) {
     const el = document.createElement('div');
-    el.className = `unit ${unit.owner} ${unit.type} tier-${unit.tier}`;
+    el.className = `unit ${unit.owner} ${unit.type}`;
     el.style.left = unit.x + 'px';
     el.style.top = unit.y + 'px';
     

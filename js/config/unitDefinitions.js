@@ -6,7 +6,7 @@ const UNIT_DEFINITIONS = {
         cost: 20,
         hp: 400,
         maxHp: 400,
-        damage: 12,
+        damage: 15,
         attackRange: 35,
         attackCooldown: 1000,
         speed: 96,
