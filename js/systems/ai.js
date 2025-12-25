@@ -46,12 +46,27 @@ const AI_STRATEGIES = {
         secondaryChance: 0.4, // Mix of healer and caster
         meleeFrontline: true, // Always ensures at least 1 melee in front
         description: 'Healer and caster focus with melee frontline protection'
+    },
+    NOOB: {
+        name: 'The Noob',
+        upgradeChance: 0.02, // Rarely upgrades (2%)
+        preferredUnit: null, // Random unit selection
+        buyChanceMultiplier: 0.3, // Buys 3x less frequently
+        badPlacement: true, // Places units randomly without strategy
+        description: 'Plays poorly - bad placement, rarely upgrades, slow spending'
     }
 };
 
-function initializeAIStrategy() {
+function initializeAIStrategy(forceStrategy = null) {
     const strategies = Object.keys(AI_STRATEGIES);
-    const chosenKey = strategies[Math.floor(Math.random() * strategies.length)];
+    let chosenKey;
+    
+    if (forceStrategy && AI_STRATEGIES[forceStrategy]) {
+        chosenKey = forceStrategy;
+    } else {
+        chosenKey = strategies[Math.floor(Math.random() * strategies.length)];
+    }
+    
     const strategy = AI_STRATEGIES[chosenKey];
     
     gameState.ai.strategy = {
@@ -73,6 +88,11 @@ function aiPurchaseUnits() {
     
     // Get AI strategy
     const strategy = gameState.ai.strategy || initializeAIStrategy();
+    
+    // The Noob buys less frequently
+    if (strategy.buyChanceMultiplier && Math.random() > strategy.buyChanceMultiplier) {
+        return;
+    }
     
     // Aggressive upgrading when gold is high or board is full
     const goldAmount = gameState.ai.gold;

@@ -324,6 +324,24 @@ function setupEventListeners() {
         location.reload();
     });
     
+    // AI strategy selector
+    document.querySelectorAll('.ai-strategy-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const selectedStrategy = btn.dataset.strategy;
+            console.log('AI Strategy button clicked:', selectedStrategy);
+            if (selectedStrategy === 'RANDOM') {
+                gameState.selectedAIStrategy = null;
+            } else {
+                gameState.selectedAIStrategy = selectedStrategy;
+            }
+            
+            // Update active button styling
+            document.querySelectorAll('.ai-strategy-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            console.log('Selected AI strategy:', gameState.selectedAIStrategy);
+        });
+    });
+    
     // AI vs AI mode toggle
     document.getElementById('ai-vs-ai-btn').addEventListener('click', () => {
         gameState.isAIvsAI = !gameState.isAIvsAI;
@@ -343,6 +361,9 @@ function setupEventListeners() {
                 };
                 displayPlayerAIStrategy(gameState.player.strategy);
             }
+            
+            // Disable AI vs AI button during gameplay
+            btn.disabled = true;
             
             // Start the game if not started
             if (!gameState.firstUnitPlaced) {

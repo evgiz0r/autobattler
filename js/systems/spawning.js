@@ -60,6 +60,11 @@ function startRound() {
     gameState.isRoundActive = true;
     gameState.round++;
     
+    // Disable AI strategy buttons and AI vs AI button during gameplay
+    document.querySelectorAll('.ai-strategy-btn').forEach(btn => btn.disabled = true);
+    const aiVsAiBtn = document.getElementById('ai-vs-ai-btn');
+    if (aiVsAiBtn) aiVsAiBtn.disabled = true;
+    
     // Play round begin sound
     SoundSystem.playRoundBegin();
     

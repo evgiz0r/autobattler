@@ -43,6 +43,11 @@ function gameLoop(timestamp) {
         // Clean up old projectiles
         ProjectileSystem.cleanupOldProjectiles(timestamp);
         
+        // Initialize AI strategy if not set and game started
+        if (gameState.firstUnitPlaced && !gameState.ai.strategy) {
+            initializeAIStrategy(gameState.selectedAIStrategy || null);
+        }
+        
         // AI buying - only after game starts (increases aggression with rounds)
         const aiBuyChance = GAME_CONFIG.AI_BUY_CHANCE + (gameState.round * GAME_CONFIG.AI_BUY_CHANCE_PER_ROUND);
         if (gameState.firstUnitPlaced && Math.random() < aiBuyChance) {
