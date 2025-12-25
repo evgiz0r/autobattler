@@ -83,7 +83,15 @@ body {
 .zone h4 {
     text-align: center;
     margin-bottom: 10px;
-    opacity: 0.5;
+    opacity: 1;
+    color: #f39c12;
+    font-weight: bold;
+    font-size: 16px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    background: rgba(0, 0, 0, 0.3);
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid rgba(243, 156, 18, 0.3);
 }
 
 .zone-health {
@@ -283,6 +291,24 @@ body {
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
 }
 
+.upgrade-btn.cannot-afford {
+    position: relative;
+    opacity: 0.6;
+}
+
+.upgrade-btn.cannot-afford::after {
+    content: '✕';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 32px;
+    color: rgba(231, 76, 60, 0.8);
+    font-weight: bold;
+    pointer-events: none;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
 .tier-header {
     display: flex;
     justify-content: space-between;
@@ -308,34 +334,37 @@ body {
 }
 
 .buy-btn {
-    width: 100%;
-    padding: 8px;
-    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-    border: 2px solid #34495e;
+    padding: 6px 10px;
+    background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%);
+    border: 2px solid #3498db;
     border-radius: 6px;
     color: #ecf0f1;
     cursor: pointer;
     transition: all 0.2s;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 3px;
     position: relative;
+    min-width: 100px;
 }
 
 .buy-btn .unit-name {
     font-weight: bold;
-    font-size: 14px;
+    font-size: 13px;
+    color: #3498db;
 }
 
 .buy-btn .unit-stats {
-    font-size: 10px;
+    font-size: 9px;
     color: #95a5a6;
+    line-height: 1.2;
 }
 
 .buy-btn:hover:not(:disabled) {
-    background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%);
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
     border-color: #3498db;
-    transform: translateY(-2px);
+    transform: scale(1.02);
+    box-shadow: 0 2px 8px rgba(52, 152, 219, 0.4);
 }
 
 .buy-btn:disabled {
@@ -520,7 +549,8 @@ button:disabled {
 /* Animation for caster AOE */
 @keyframes pulse {
     0% {
-        transform0.8;
+        transform: scale(0.8);
+        opacity: 1;
     }
     100% {
         transform: scale(1);
@@ -538,8 +568,7 @@ button:disabled {
         opacity: 0.6;
     }
     100% {
-        transform: scale(0.8
-        transform: scale(1);
+        transform: scale(0.8);
         opacity: 0;
     }
 }
@@ -556,4 +585,88 @@ button:disabled {
         transform: scale(0.8);
         opacity: 0;
     }
+}
+/* New shop grid layout */
+.shops-container {
+    display: flex;
+    gap: 20px;
+    justify-content: space-between;
+}
+
+.shop-section {
+    flex: 1;
+}
+
+.shop-section h3 {
+    margin-bottom: 8px;
+    color: #3498db;
+}
+
+.units-grid {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.unit-section {
+    display: flex;
+    flex-direction: row;
+    gap: 6px;
+    align-items: stretch;
+}
+
+.upgrade-btn {
+    padding: 4px 8px;
+    background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+    border: 2px solid #27ae60;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    align-items: center;
+    font-size: 11px;
+    min-width: 80px;
+}
+
+.upgrade-btn div {
+    font-weight: bold;
+    font-size: 11px;
+}
+
+.upgrade-btn small {
+    font-size: 9px;
+    opacity: 0.9;
+}
+
+.upgrade-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+    border-color: #1abc9c;
+    transform: scale(1.05);
+    box-shadow: 0 2px 8px rgba(46, 204, 113, 0.4);
+}
+
+.ai-readonly {
+    opacity: 0.8;
+    cursor: default;
+}
+
+.ai-readonly:hover {
+    transform: none !important;
+}
+
+.strategy-name {
+    color: #f39c12;
+    font-weight: bold;
+    margin-top: 8px;
+    font-size: 15px;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 6px 8px;
+    border-radius: 4px;
+    border: 2px solid rgba(243, 156, 18, 0.5);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    box-shadow: 0 0 8px rgba(243, 156, 18, 0.3);
 }

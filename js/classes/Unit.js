@@ -5,22 +5,29 @@ class Unit {
         this.owner = owner; // 'player' or 'ai'
         this.name = definition.name;
         this.type = definition.type;
-        this.tier = definition.tier;
+        
+        // Apply upgrade multipliers based on upgrade level
+        const ownerData = owner === 'player' ? gameState.player : gameState.ai;
+        const upgradeLevel = ownerData.upgradeLevels[this.type] || 0;
+        this.upgradeLevel = upgradeLevel; // Store for kill gold calculation
+        const hpMult = Math.pow(GAME_CONFIG.UPGRADE_HP_MULTIPLIER, upgradeLevel);
+        const dmgMult = Math.pow(GAME_CONFIG.UPGRADE_DAMAGE_MULTIPLIER, upgradeLevel);
+        const cooldownMult = Math.max(Math.pow(GAME_CONFIG.UPGRADE_COOLDOWN_MULTIPLIER, upgradeLevel), GAME_CONFIG.MIN_COOLDOWN_MULTIPLIER);
+        const aoeMult = Math.min(Math.pow(GAME_CONFIG.UPGRADE_AOE_MULTIPLIER, upgradeLevel), GAME_CONFIG.MAX_AOE_MULTIPLIER);
         
         // Apply comeback boost based on lives lost
-        const ownerData = owner === 'player' ? gameState.player : gameState.ai;
         const comebackBoost = 1 + (ownerData.livesLost * GAME_CONFIG.COMEBACK_BOOST_PER_LIFE);
         
-        // Stats (with comeback boost applied)
-        this.hp = Math.round(definition.hp * comebackBoost);
-        this.maxHp = Math.round(definition.maxHp * comebackBoost);
-        this.damage = Math.round(definition.damage * comebackBoost);
-        this.healAmount = definition.healAmount || 0;
+        // Stats (with upgrade and comeback boost applied)
+        this.hp = Math.round(definition.hp * hpMult * comebackBoost);
+        this.maxHp = Math.round(definition.maxHp * hpMult * comebackBoost);
+        this.damage = Math.round(definition.damage * dmgMult * comebackBoost);
+        this.healAmount = Math.round((definition.healAmount || 0) * dmgMult);
         this.maxTargets = definition.maxTargets || 0;
         this.attackRange = definition.attackRange;
-        this.attackCooldown = definition.attackCooldown;
+        this.attackCooldown = Math.round(definition.attackCooldown * cooldownMult);
         this.speed = definition.speed;
-        this.aoeRadius = definition.aoeRadius || 0;
+        this.aoeRadius = Math.round((definition.aoeRadius || 0) * aoeMult);
         
         // Position
         this.x = x;

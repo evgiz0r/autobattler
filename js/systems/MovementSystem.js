@@ -51,8 +51,21 @@ const MovementSystem = {
         
         if (distance > 0) {
             const moveAmount = unit.speed * (deltaTime / 1000);
-            const newX = unit.x + (dx / distance) * moveAmount;
-            const newY = unit.y + (dy / distance) * moveAmount;
+            
+            // Add small random offset 10% of the time to help unstick units
+            let finalDx = dx / distance;
+            let finalDy = dy / distance;
+            
+            if (Math.random() < 0.1) {
+                const randomAngle = (Math.random() - 0.5) * 0.5; // ±0.25 radians (~14 degrees)
+                const currentAngle = Math.atan2(finalDy, finalDx);
+                const newAngle = currentAngle + randomAngle;
+                finalDx = Math.cos(newAngle);
+                finalDy = Math.sin(newAngle);
+            }
+            
+            const newX = unit.x + finalDx * moveAmount;
+            const newY = unit.y + finalDy * moveAmount;
             
             if (!this.checkCollision(newX, newY, unit)) {
                 unit.x = newX;

@@ -1,131 +1,109 @@
-// Shop Manager - handles shop UI generation and updates
+// Shop Manager - handles shop UI generation and updates for upgrade system
 
 const ShopManager = {
     // Generate all shop UI dynamically
     generateShop() {
-        const shopContainer = document.getElementById('unit-shop');
-        if (!shopContainer) return;
-        
-        shopContainer.innerHTML = '<h3>Unit Shop</h3><div id="tiers-container"></div>';
-        
-        const tiersContainer = document.getElementById('tiers-container');
-        
-        // Create horizontal tier sections
-        for (let tier = 1; tier <= 7; tier++) {
-            const tierSection = this.createTierSection(tier);
-            tiersContainer.appendChild(tierSection);
-        }
+        this.generatePlayerShop();
+        this.generateAIShop();
     },
     
-    createTierSection(tier) {
-        const section = document.createElement('div');
-        section.id = `tier-${tier}-units`;
-        section.className = tier === 1 ? 'tier-section' : 'tier-section locked';
+    generatePlayerShop() {
+        const grid = document.querySelector('#player-shop .units-grid');
+        if (!grid) return;
         
-        // Tier header with countdown
-        const header = document.createElement('div');
-        header.className = 'tier-header';
+        grid.innerHTML = '';
         
-        const title = document.createElement('h4');
-        title.textContent = `Tier ${tier}`;
-        header.appendChild(title);
-        
-        if (tier > 1) {
-            const countdown = document.createElement('span');
-            countdown.className = 'tier-countdown';
-            countdown.id = `tier-${tier}-countdown`;
-            countdown.textContent = this.getCountdownText(tier);
-            header.appendChild(countdown);
-        }
-        
-        section.appendChild(header);
-        
-        // Unit buttons container (horizontal)
-        const unitsContainer = document.createElement('div');
-        unitsContainer.className = 'units-container';
-        
-        // Add unit buttons for each type
+        // Create sections for 4 unit types
         const types = ['melee', 'ranged', 'caster', 'healer'];
         types.forEach(type => {
-            const unitKey = `${type}${tier}`;
-            if (UNIT_DEFINITIONS[unitKey]) {
-                const btn = this.createUnitButton(unitKey, tier > 1);
-                unitsContainer.appendChild(btn);
-            }
+            const section = this.createUnitSection(type, 'player');
+            grid.appendChild(section);
         });
+    },
+    
+    generateAIShop() {
+        const grid = document.querySelector('#ai-shop .units-grid');
+        if (!grid) return;
         
-        section.appendChild(unitsContainer);
+        grid.innerHTML = '';
+        
+        // Create sections for 4 unit types (read-only for AI)
+        const types = ['melee', 'ranged', 'caster', 'healer'];
+        types.forEach(type => {
+            const section = this.createUnitSection(type, 'ai');
+            grid.appendChild(section);
+        });
+    },
+    
+    createUnitSection(type, owner) {
+        const section = document.createElement('div');
+        section.className = 'unit-section';
+        
+        // Get base definition and current upgrade level
+        const def = UNIT_DEFINITIONS[type];
+        const upgradeLevel = owner === 'player' ? (gameState.player.upgradeLevels[type] || 0) : (gameState.ai.upgradeLevels[type] || 0);
+        const unitCost = this.getUnitCost(type, upgradeLevel);
+        
+        // Buy button
+        const buyBtn = document.createElement('button');
+        buyBtn.className = owner === 'player' ? 'buy-btn' : 'buy-btn ai-readonly';
+        buyBtn.dataset.unit = type;
+        buyBtn.dataset.owner = owner;
+        if (owner === 'ai') buyBtn.disabled = true;
+        buyBtn.innerHTML = `
+            <div class="unit-name">${this.capitalizeFirst(type)} [Lvl ${upgradeLevel}] (${unitCost}g)</div>
+            <small class="unit-stats">${this.getStatsText(type, upgradeLevel)}</small>
+        `;
+        
+        // Upgrade button
+        const upgradeBtn = document.createElement('button');
+        upgradeBtn.className = owner === 'player' ? 'upgrade-btn' : 'upgrade-btn ai-readonly';
+        upgradeBtn.dataset.type = type;
+        upgradeBtn.dataset.owner = owner;
+        if (owner === 'ai') upgradeBtn.disabled = true;
+        const upgradeCost = this.getUpgradeCost(type, upgradeLevel);
+        upgradeBtn.innerHTML = `
+            <div>Upgrade (${upgradeCost}g)</div>
+            <small>Lvl ${upgradeLevel} → ${upgradeLevel + 1}</small>
+        `;
+        
+        section.appendChild(buyBtn);
+        section.appendChild(upgradeBtn);
         
         return section;
     },
     
-    createUnitButton(unitKey, disabled) {
-        const def = UNIT_DEFINITIONS[unitKey];
-        const btn = document.createElement('button');
-        btn.className = 'buy-btn';
-        btn.dataset.unit = unitKey;
-        btn.disabled = disabled;
+    getUnitCost(type, upgradeLevel) {
+        const def = UNIT_DEFINITIONS[type];
+        // Unit cost increases by +5 per upgrade level
+        return def.cost + (upgradeLevel * 5);
+    },
+    
+    getUpgradeCost(type, upgradeLevel) {
+        // Upgrade cost starts at 20, increases by +20 per level
+        return 20 + (upgradeLevel * 20);
+    },
+    
+    getStatsText(type, upgradeLevel) {
+        const def = UNIT_DEFINITIONS[type];
+        const hpMult = Math.pow(GAME_CONFIG.UPGRADE_HP_MULTIPLIER, upgradeLevel);
+        const dmgMult = Math.pow(GAME_CONFIG.UPGRADE_DAMAGE_MULTIPLIER, upgradeLevel);
         
-        // Button content
-        const name = document.createElement('div');
-        name.className = 'unit-name';
-        name.textContent = `${this.capitalizeFirst(def.type)} (${def.cost}g)`;
-        btn.appendChild(name);
+        const hp = Math.round(def.hp * hpMult);
         
-        const stats = document.createElement('small');
-        stats.className = 'unit-stats';
-        
-        if (def.type === 'healer') {
-            stats.textContent = `HP:${def.hp} HEAL:${def.healAmount} TGTS:${def.maxTargets} RNG:${def.attackRange}`;
-        } else if (def.type === 'caster') {
-            stats.textContent = `HP:${def.hp} DMG:${def.damage} RNG:${def.attackRange} AOE:${def.aoeRadius}`;
+        if (type === 'healer') {
+            const heal = Math.round(def.healAmount * dmgMult);
+            return `HP:${hp} HEAL:${heal} TGTS:${def.maxTargets} RNG:${def.attackRange}`;
+        } else if (type === 'caster') {
+            const dmg = Math.round(def.damage * dmgMult);
+            return `HP:${hp} DMG:${dmg} RNG:${def.attackRange} AOE:${def.aoeRadius}`;
         } else {
-            stats.textContent = `HP:${def.hp} DMG:${def.damage} RNG:${def.attackRange} SPD:${def.speed}`;
+            const dmg = Math.round(def.damage * dmgMult);
+            return `HP:${hp} DMG:${dmg} RNG:${def.attackRange} SPD:${def.speed}`;
         }
-        
-        btn.appendChild(stats);
-        
-        return btn;
     },
     
     capitalizeFirst(str) {
         return str.charAt(0).toUpperCase() + str.slice(1);
-    },
-    
-    getCountdownText(tier) {
-        const unlockRound = (tier - 1) * 5;
-        const currentRound = gameState.round;
-        const roundsLeft = Math.max(0, unlockRound - currentRound);
-        
-        if (roundsLeft === 0 && gameState.player.unlockedTiers.includes(tier)) {
-            return 'Unlocked';
-        } else if (roundsLeft === 0) {
-            return 'Unlocking...';
-        } else {
-            return `Unlocks in ${roundsLeft} rounds`;
-        }
-    },
-    
-    updateCountdowns() {
-        for (let tier = 2; tier <= 7; tier++) {
-            const countdown = document.getElementById(`tier-${tier}-countdown`);
-            if (countdown) {
-                countdown.textContent = this.getCountdownText(tier);
-            }
-        }
-    },
-    
-    unlockTier(tier) {
-        const tierSection = document.getElementById(`tier-${tier}-units`);
-        if (tierSection) {
-            tierSection.classList.remove('locked');
-            tierSection.querySelectorAll('.buy-btn').forEach(btn => btn.disabled = false);
-        }
-        
-        const countdown = document.getElementById(`tier-${tier}-countdown`);
-        if (countdown) {
-            countdown.textContent = 'Unlocked';
-            countdown.style.color = '#2ecc71';
-        }
     }
 };

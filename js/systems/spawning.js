@@ -63,24 +63,16 @@ function startRound() {
     // Play round begin sound
     SoundSystem.playRoundBegin();
     
-    // Check for auto-unlocking tiers
-    checkAutoUnlockTiers();
-    
     // Clone template units from build zones to battle zone
     const templateUnits = gameState.units.filter(u => 
         u.element && (u.element.parentElement === DOM.playerZone || u.element.parentElement === DOM.aiZone)
     );
     
     templateUnits.forEach(templateUnit => {
-        // Find matching definition
-        const defKey = Object.keys(UNIT_DEFINITIONS).find(key => {
-            const def = UNIT_DEFINITIONS[key];
-            return def.name === templateUnit.name && 
-                   def.tier === templateUnit.tier && 
-                   def.type === templateUnit.type;
-        });
+        // Get base definition for unit type
+        const def = UNIT_DEFINITIONS[templateUnit.type];
         
-        if (defKey) {
+        if (def) {
             // Spawn maintaining X position relative to their zone, not all at edge
             // This prevents all units from spawning at the same X coordinate
             let spawnX;
@@ -94,7 +86,7 @@ function startRound() {
             }
             
             const battleUnit = new Unit(
-                UNIT_DEFINITIONS[defKey],
+                def,
                 templateUnit.owner,
                 spawnX,
                 templateUnit.y
@@ -117,6 +109,23 @@ function startRound() {
 
 function endRound() {
     awardRoundGold();
+    
+    // Auto-upgrade all units every 3 rounds (regardless of cost)
+    if (gameState.round > 0 && gameState.round % 3 === 0) {
+        const types = ['melee', 'ranged', 'caster', 'healer'];
+        types.forEach(type => {
+            gameState.player.upgradeLevels[type]++;
+            gameState.ai.upgradeLevels[type]++;
+        });
+        
+        console.log(`Round ${gameState.round}: All units auto-upgraded to level ${gameState.player.upgradeLevels.melee}`);
+        
+        // Update UI to show new upgrade levels
+        if (window.updateUpgradeButtons) {
+            updateUpgradeButtons();
+        }
+    }
+    
     gameState.roundTimer = GAME_CONFIG.ROUND_DURATION;
     updateUI();
 }

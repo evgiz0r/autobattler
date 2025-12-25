@@ -1,14 +1,28 @@
 // UI Manager - handles UI updates and event listeners
 
 function initializeGame() {
-    // Initialize AI strategy (can be changed to other strategies)
-    gameState.aiStrategy = new BalancedAIStrategy('normal');
-    // Alternative strategies:
-    // gameState.aiStrategy = new RandomAIStrategy();
-    // gameState.aiStrategy = new AggressiveAIStrategy();
+    // Initialize AI strategy and display its nickname
+    const strategy = initializeAIStrategy();
+    displayAIStrategy(strategy);
     
     // Generate shop UI dynamically
     ShopManager.generateShop();
+}
+
+function displayAIStrategy(strategy) {
+    // Update AI zone label with strategy name
+    const aiZoneLabel = document.getElementById('ai-zone-label');
+    if (aiZoneLabel) {
+        aiZoneLabel.textContent = strategy.name;
+    }
+}
+
+function displayPlayerAIStrategy(strategy) {
+    // Update player zone label with strategy name (for AI vs AI mode)
+    const playerZoneLabel = document.getElementById('player-zone-label');
+    if (playerZoneLabel) {
+        playerZoneLabel.textContent = strategy.name;
+    }
 }
 
 function updateUI() {
@@ -23,30 +37,64 @@ function updateUI() {
     document.getElementById('player-boost').textContent = playerBoost > 0 ? `(+${playerBoost}%)` : '';
     document.getElementById('ai-boost').textContent = aiBoost > 0 ? `(+${aiBoost}%)` : '';
     
-    // Show tier bonus in gold display
-    const tierBonus = gameState.player.unlockedTiers.length - 1;
+    // Show economy bonus in gold display
     const economyBonus = gameState.player.economyLevel || 0;
-    const totalBonus = 1 + tierBonus + economyBonus; // base 1 + bonuses
+    const totalBonus = 1 + economyBonus; // base 1 + economy bonuses
     document.getElementById('player-gold').textContent = `${gameState.player.gold} (+${totalBonus}/s)`;
     
-    const aiTierBonus = gameState.ai.unlockedTiers.length - 1;
     const difficultyMultiplier = (GAME_CONFIG.DIFFICULTY[gameState.difficulty] || GAME_CONFIG.DIFFICULTY.MEDIUM).multiplier;
-    const aiTotalBonus = Math.round((1 + aiTierBonus) * difficultyMultiplier * 10) / 10;
+    const aiTotalBonus = Math.round(difficultyMultiplier * 10) / 10;
     
     document.getElementById('ai-gold').textContent = `${gameState.ai.gold} (+${aiTotalBonus}/s)`;
     document.getElementById('round-number').textContent = gameState.round;
     document.getElementById('round-timer').textContent = Math.ceil(gameState.roundTimer);
     
-    // Update affordability indicators
-    document.querySelectorAll('.buy-btn').forEach(btn => {
+    // Update affordability indicators for both player and AI shops
+    document.querySelectorAll('.buy-btn[data-owner="player"]').forEach(btn => {
         const unitType = btn.dataset.unit;
         const definition = UNIT_DEFINITIONS[unitType];
-        if (definition) {
-            if (gameState.player.gold < definition.cost) {
-                btn.classList.add('cannot-afford');
-            } else {
-                btn.classList.remove('cannot-afford');
-            }
+        
+        if (gameState.player.gold < definition.cost) {
+            btn.classList.add('cannot-afford');
+        } else {
+            btn.classList.remove('cannot-afford');
+        }
+    });
+    
+    document.querySelectorAll('.buy-btn[data-owner="ai"]').forEach(btn => {
+        const unitType = btn.dataset.unit;
+        const definition = UNIT_DEFINITIONS[unitType];
+        
+        if (gameState.ai.gold < definition.cost) {
+            btn.classList.add('cannot-afford');
+        } else {
+            btn.classList.remove('cannot-afford');
+        }
+    });
+    
+    // Update affordability indicators for upgrade buttons
+    document.querySelectorAll('.upgrade-btn[data-owner="player"]').forEach(btn => {
+        const unitType = btn.dataset.type;
+        const upgradeLevel = gameState.player.upgradeLevels[unitType] || 0;
+        const upgradeCost = ShopManager.getUpgradeCost(unitType, upgradeLevel);
+        
+        // Disable upgrades before game starts OR if can't afford
+        if (gameState.round === 0 || gameState.player.gold < upgradeCost) {
+            btn.classList.add('cannot-afford');
+        } else {
+            btn.classList.remove('cannot-afford');
+        }
+    });
+    
+    document.querySelectorAll('.upgrade-btn[data-owner="ai"]').forEach(btn => {
+        const unitType = btn.dataset.type;
+        const upgradeLevel = gameState.ai.upgradeLevels[unitType] || 0;
+        const upgradeCost = ShopManager.getUpgradeCost(unitType, upgradeLevel);
+        
+        if (gameState.ai.gold < upgradeCost) {
+            btn.classList.add('cannot-afford');
+        } else {
+            btn.classList.remove('cannot-afford');
         }
     });
 }
@@ -54,11 +102,6 @@ function updateUI() {
 function selectUnitForPlacement(unitType) {
     const definition = UNIT_DEFINITIONS[unitType];
     if (!definition) return;
-    
-    if (!gameState.player.unlockedTiers.includes(definition.tier)) {
-        console.log('Tier locked');
-        return;
-    }
     
     gameState.selectedUnitType = unitType;
     
@@ -68,7 +111,7 @@ function selectUnitForPlacement(unitType) {
     }
     
     const preview = document.createElement('div');
-    preview.className = `unit player ${definition.type} tier-${definition.tier} cursor-preview`;
+    preview.className = `unit player ${definition.type} cursor-preview`;
     preview.style.pointerEvents = 'none';
     preview.style.opacity = '0.6';
     preview.style.position = 'absolute';
@@ -83,15 +126,85 @@ function selectUnitForPlacement(unitType) {
     }
 }
 
-function setupEventListeners() {
-    // Unit purchase buttons - delegate from unit shop container
-    const unitShop = document.getElementById('unit-shop');
-    if (unitShop) {
-        unitShop.addEventListener('click', (e) => {
-            const buyBtn = e.target.closest('.buy-btn');
+function upgradeUnit(unitType) {
+    const definition = UNIT_DEFINITIONS[unitType];
+    if (!definition) return;
+    
+    // Can't upgrade before game starts
+    if (gameState.round === 0) {
+        console.log('Cannot upgrade units before the game starts!');
+        return;
+    }
+    
+    const upgradeLevel = gameState.player.upgradeLevels[unitType] || 0;
+    const upgradeCost = ShopManager.getUpgradeCost(unitType, upgradeLevel);
+    
+    if (gameState.player.gold < upgradeCost) {
+        console.log(`Not enough gold to upgrade ${definition.name} (need ${upgradeCost}g)`);
+        return;
+    }
+    
+    gameState.player.gold -= upgradeCost;
+    gameState.player.upgradeLevels[unitType]++;
+    
+    // Update shop display
+    updateUpgradeButtons();
+    updateUI();
+    
+    console.log(`Upgraded ${definition.name} to level ${gameState.player.upgradeLevels[unitType]}!`);
+}
+
+function updateUpgradeButtons() {
+    // Update both player and AI shops
+    ['player', 'ai'].forEach(owner => {
+        const types = ['melee', 'ranged', 'caster', 'healer'];
+        types.forEach(type => {
+            const upgradeLevel = owner === 'player' ? gameState.player.upgradeLevels[type] : gameState.ai.upgradeLevels[type];
+            const unitCost = ShopManager.getUnitCost(type, upgradeLevel);
+            const upgradeCost = ShopManager.getUpgradeCost(type, upgradeLevel);
+            
+            // Update upgrade button
+            const upgradeBtn = document.querySelector(`.upgrade-btn[data-type="${type}"][data-owner="${owner}"]`);
+            if (upgradeBtn) {
+                upgradeBtn.innerHTML = `
+                    <div>Upgrade (${upgradeCost}g)</div>
+                    <small>Lvl ${upgradeLevel} → ${upgradeLevel + 1}</small>
+                `;
+            }
+            
+            // Update buy button with new cost and stats
+            const buyBtn = document.querySelector(`.buy-btn[data-unit="${type}"][data-owner="${owner}"]`);
             if (buyBtn) {
+                const nameElem = buyBtn.querySelector('.unit-name');
+                const statsElem = buyBtn.querySelector('.unit-stats');
+                if (nameElem) {
+                    nameElem.textContent = `${ShopManager.capitalizeFirst(type)} [Lvl ${upgradeLevel}] (${unitCost}g)`;
+                }
+                if (statsElem) {
+                    statsElem.textContent = ShopManager.getStatsText(type, upgradeLevel);
+                }
+            }
+        });
+    });
+}
+
+function setupEventListeners() {
+    // Unit purchase buttons - delegate from player shop container only
+    const playerShop = document.getElementById('player-shop');
+    if (playerShop) {
+        playerShop.addEventListener('click', (e) => {
+            const buyBtn = e.target.closest('.buy-btn');
+            if (buyBtn && buyBtn.dataset.owner === 'player') {
                 const unitType = buyBtn.dataset.unit;
                 selectUnitForPlacement(unitType);
+                return;
+            }
+            
+            const upgradeBtn = e.target.closest('.upgrade-btn');
+            if (upgradeBtn && upgradeBtn.dataset.owner === 'player') {
+                const unitType = upgradeBtn.dataset.type;
+                upgradeUnit(unitType);
+                return;
             }
         });
     }
@@ -220,6 +333,17 @@ function setupEventListeners() {
             btn.style.background = '#2ecc71';
             btn.textContent = 'AI vs AI: ON';
             
+            // Initialize and display player AI strategy
+            if (!gameState.player.strategy) {
+                const strategies = Object.keys(AI_STRATEGIES);
+                const chosenKey = strategies[Math.floor(Math.random() * strategies.length)];
+                gameState.player.strategy = {
+                    key: chosenKey,
+                    ...AI_STRATEGIES[chosenKey]
+                };
+                displayPlayerAIStrategy(gameState.player.strategy);
+            }
+            
             // Start the game if not started
             if (!gameState.firstUnitPlaced) {
                 gameState.firstUnitPlaced = true;
@@ -235,6 +359,12 @@ function setupEventListeners() {
         } else {
             btn.style.background = '';
             btn.textContent = 'AI vs AI';
+            
+            // Restore Build Area label
+            const playerZoneLabel = document.getElementById('player-zone-label');
+            if (playerZoneLabel) {
+                playerZoneLabel.textContent = 'Build Area';
+            }
         }
     });
     
@@ -259,5 +389,13 @@ function setupEventListeners() {
         const btn = document.getElementById('sound-toggle-btn');
         btn.textContent = SoundSystem.enabled ? 'Sound: ON' : 'Sound: OFF';
         btn.style.background = SoundSystem.enabled ? '' : '#e74c3c';
+    });
+    
+    // Infinite mode toggle button
+    document.getElementById('infinite-mode-btn').addEventListener('click', () => {
+        gameState.infiniteMode = !gameState.infiniteMode;
+        const btn = document.getElementById('infinite-mode-btn');
+        btn.textContent = gameState.infiniteMode ? 'Infinite Mode: ON' : 'Infinite Mode: OFF';
+        btn.style.background = gameState.infiniteMode ? '#2ecc71' : '';
     });
 }

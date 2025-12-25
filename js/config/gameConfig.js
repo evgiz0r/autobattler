@@ -5,19 +5,20 @@ const GAME_CONFIG = {
     ROUND_DURATION: 10, // seconds
     MAX_UNITS_PER_ZONE: 999, // Essentially unlimited
     MIN_UNIT_DISTANCE: 25,
-    TIER_2_UNLOCK_COST: 80,
-    TIER_3_UNLOCK_COST: 150,
-    TIER_4_UNLOCK_COST: 250,
-    TIER_5_UNLOCK_COST: 400,
-    TIER_6_UNLOCK_COST: 650,
-    TIER_7_UNLOCK_COST: 1000,
+    UPGRADE_HP_MULTIPLIER: 1.05, // 105% HP per upgrade (5% increase)
+    UPGRADE_DAMAGE_MULTIPLIER: 1.05, // 105% damage per upgrade (5% increase)
+    UPGRADE_COOLDOWN_MULTIPLIER: 0.95, // 5% faster attacks per upgrade
+    UPGRADE_AOE_MULTIPLIER: 1.05, // 5% larger AoE per upgrade
+    MAX_AOE_MULTIPLIER: 2.0, // Cap AoE at 2x base size
+    MIN_COOLDOWN_MULTIPLIER: 0.5, // Cap attack speed at 2x faster (50% of base cooldown)
     PASSIVE_GOLD_INTERVAL: 1000, // ms - 1 gold per second
     PASSIVE_GOLD_AMOUNT: 1,
     ROUND_GOLD_BASE: 8,
     ROUND_GOLD_PER_ROUND: 2,
     KILL_GOLD_BASE: 1,
     KILL_GOLD_PER_TIER: 2,
-    AI_BUY_CHANCE: 0.01, // per frame
+    AI_BUY_CHANCE: 0.015, // per frame - base chance
+    AI_BUY_CHANCE_PER_ROUND: 0.002, // additional chance per round (gets more aggressive)
     PROJECTILE_SPEED: 200,
     PROJECTILE_MAX_AGE: 5000, // ms
     BASE_DAMAGE_TO_CORE: 1,
@@ -34,15 +35,15 @@ const gameState = {
     player: {
         health: GAME_CONFIG.STARTING_HEALTH,
         gold: GAME_CONFIG.STARTING_GOLD,
-        unlockedTiers: [1],
-        economyLevel: 0, // Economy upgrade level (0-3)
-        livesLost: 0 // Track lives lost for comeback mechanic
+        upgradeLevels: { melee: 0, ranged: 0, caster: 0, healer: 0 },
+        economyLevel: 0,
+        livesLost: 0
     },
     ai: {
         health: GAME_CONFIG.STARTING_HEALTH,
         gold: GAME_CONFIG.STARTING_GOLD,
-        unlockedTiers: [1],
-        livesLost: 0 // Track lives lost for comeback mechanic
+        upgradeLevels: { melee: 0, ranged: 0, caster: 0, healer: 0 },
+        livesLost: 0
     },
     round: 0,
     roundTimer: GAME_CONFIG.ROUND_DURATION,
@@ -56,9 +57,10 @@ const gameState = {
     showTargetLines: true,
     cursorPreview: null,
     firstUnitPlaced: false,
-    aiStrategy: null, // Will be initialized in init()
-    difficulty: 'MEDIUM', // Current difficulty: 'EASY', 'MEDIUM', or 'HARD'
-    isAIvsAI: false // AI vs AI mode
+    aiStrategy: null,
+    difficulty: 'MEDIUM',
+    isAIvsAI: false, // AI vs AI mode
+    infiniteMode: false // Infinite mode - game doesn't end when lives reach 0
 };
 
 // DOM element references

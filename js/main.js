@@ -43,13 +43,14 @@ function gameLoop(timestamp) {
         // Clean up old projectiles
         ProjectileSystem.cleanupOldProjectiles(timestamp);
         
-        // AI buying (using strategy pattern) - only after game starts
-        if (gameState.firstUnitPlaced && Math.random() < gameState.aiStrategy.getPurchaseChance()) {
+        // AI buying - only after game starts (increases aggression with rounds)
+        const aiBuyChance = GAME_CONFIG.AI_BUY_CHANCE + (gameState.round * GAME_CONFIG.AI_BUY_CHANCE_PER_ROUND);
+        if (gameState.firstUnitPlaced && Math.random() < aiBuyChance) {
             aiPurchaseUnits();
         }
         
-        // Player AI buying in AI vs AI mode
-        if (gameState.isAIvsAI && gameState.firstUnitPlaced && Math.random() < gameState.aiStrategy.getPurchaseChance()) {
+        // Player AI buying in AI vs AI mode (also scales with rounds)
+        if (gameState.isAIvsAI && gameState.firstUnitPlaced && Math.random() < aiBuyChance) {
             playerAIPurchaseUnits();
         }
         

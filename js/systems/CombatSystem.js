@@ -19,18 +19,19 @@ const CombatSystem = {
     },
     
     // Perform melee attack
-    performMeleeAttack(unit, target, currentTime) {
+    performMeleeAttack(unit, target, enemies, currentTime) {
         if (!unit.canAttack(currentTime)) return;
         
         unit.attack(currentTime);
         
-        // Create visual effect
+        // Create visual effect at target position (showing AoE radius)
+        const effectRadius = unit.aoeRadius > 0 ? unit.aoeRadius : 15;
         const meleeEffect = document.createElement('div');
         meleeEffect.style.position = 'absolute';
-        meleeEffect.style.left = (target.x - 15) + 'px';
-        meleeEffect.style.top = (target.y - 15) + 'px';
-        meleeEffect.style.width = '30px';
-        meleeEffect.style.height = '30px';
+        meleeEffect.style.left = (target.x - effectRadius) + 'px';
+        meleeEffect.style.top = (target.y - effectRadius) + 'px';
+        meleeEffect.style.width = (effectRadius * 2) + 'px';
+        meleeEffect.style.height = (effectRadius * 2) + 'px';
         meleeEffect.style.border = '3px solid #e74c3c';
         meleeEffect.style.borderRadius = '50%';
         meleeEffect.style.backgroundColor = 'rgba(231, 76, 60, 0.4)';
@@ -43,11 +44,33 @@ const CombatSystem = {
         // Play hit sound
         SoundSystem.playHit();
         
-        const wasDead = target.hp <= 0;
-        target.takeDamage(unit.damage);
-        
-        if (!wasDead && target.hp <= 0) {
-            this.awardKillGold(target.tier, unit.owner);
+        // If unit has AoE, damage all enemies in range
+        if (unit.aoeRadius > 0 && enemies) {
+            const enemiesInRange = [];
+            for (let enemy of enemies) {
+                const dist = MathUtils.distance2D({ x: target.x, y: target.y }, enemy);
+                if (dist <= unit.aoeRadius) {
+                    enemiesInRange.push(enemy);
+                }
+            }
+            
+            // Damage all enemies in AoE
+            for (let enemy of enemiesInRange) {
+                const wasDead = enemy.hp <= 0;
+                enemy.takeDamage(unit.damage);
+                
+                if (!wasDead && enemy.hp <= 0) {
+                    this.awardKillGold(enemy.upgradeLevel || 0, unit.owner);
+                }
+            }
+        } else {
+            // Single target damage (fallback)
+            const wasDead = target.hp <= 0;
+            target.takeDamage(unit.damage);
+            
+            if (!wasDead && target.hp <= 0) {
+                this.awardKillGold(target.upgradeLevel || 0, unit.owner);
+            }
         }
     },
     
@@ -81,8 +104,8 @@ const CombatSystem = {
         
         setTimeout(() => aoeEffect.remove(), 300);
         
-        // Max targets based on tier
-        const maxTargets = unit.tier + 1;
+        // Max targets based on upgrade level (minimum 3, increases with upgrades)
+        const maxTargets = Math.max(3, Math.floor(unit.upgradeLevel / 2) + 3);
         
         // Find enemies in AOE radius
         const enemiesInRange = [];
@@ -106,26 +129,22 @@ const CombatSystem = {
             enemy.takeDamage(unit.damage);
             
             if (!wasDead && enemy.hp <= 0) {
-                this.awardKillGold(enemy.tier, unit.owner);
+                this.awardKillGold(enemy.upgradeLevel || 0, unit.owner);
             }
         }
     },
     
     // Award gold for killing an enemy
-    awardKillGold(enemyTier, attackerOwner) {
-        // Base kill gold scales with enemy tier
-        const baseGold = GAME_CONFIG.KILL_GOLD_BASE + (enemyTier * GAME_CONFIG.KILL_GOLD_PER_TIER);
+    awardKillGold(enemyUpgradeLevel, attackerOwner) {
+        // Base kill gold scales with enemy upgrade level
+        const baseGold = GAME_CONFIG.KILL_GOLD_BASE + (enemyUpgradeLevel * GAME_CONFIG.KILL_GOLD_PER_TIER);
         
         if (attackerOwner === 'player') {
-            // Multiply by 1.5x for each tier unlocked (starting at tier 1 = 1x)
-            const tierMultiplier = Math.pow(1.5, gameState.player.unlockedTiers.length - 1);
-            const goldAmount = Math.round(baseGold * tierMultiplier);
-            gameState.player.gold += goldAmount;
+            gameState.player.gold += baseGold;
         } else if (attackerOwner === 'ai') {
             // AI gets gold with difficulty multiplier applied
-            const tierMultiplier = Math.pow(1.5, gameState.ai.unlockedTiers.length - 1);
             const difficultyMultiplier = (GAME_CONFIG.DIFFICULTY[gameState.difficulty] || GAME_CONFIG.DIFFICULTY.MEDIUM).multiplier;
-            const goldAmount = Math.round(baseGold * tierMultiplier * difficultyMultiplier);
+            const goldAmount = Math.round(baseGold * difficultyMultiplier);
             gameState.ai.gold += goldAmount;
         }
     }

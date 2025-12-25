@@ -90,7 +90,7 @@ const ProjectileSystem = {
                 enemy.takeDamage(proj.damage);
                 
                 if (!wasDead && enemy.hp <= 0) {
-                    CombatSystem.awardKillGold(enemy.tier, proj.owner);
+                    CombatSystem.awardKillGold(enemy.upgradeLevel || 0, proj.owner);
                 }
                 
                 proj.hitUnits.add(enemy.id);

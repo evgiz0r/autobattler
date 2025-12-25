@@ -101,6 +101,9 @@ const BattleSystem = {
     
     // Check if game is over
     checkGameOver() {
+        // Skip game over check if infinite mode is enabled
+        if (gameState.infiniteMode) return;
+        
         if (gameState.player.health <= 0 || gameState.ai.health <= 0) {
             if (!gameState.isPaused) {
                 const winner = gameState.player.health > 0 ? 'Player' : 'AI';

@@ -27,7 +27,7 @@ class MeleeBehavior extends UnitBehavior {
         if (distance > this.unit.attackRange) {
             MovementSystem.moveTowardsTarget(this.unit, this.unit.target, deltaTime, battleContext.battleWidth);
         } else {
-            CombatSystem.performMeleeAttack(this.unit, this.unit.target, currentTime);
+            CombatSystem.performMeleeAttack(this.unit, this.unit.target, enemies, currentTime);
         }
     }
     
