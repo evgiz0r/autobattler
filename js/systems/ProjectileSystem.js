@@ -37,12 +37,16 @@ const ProjectileSystem = {
                 proj.hitCount = 0;
             }
             
+            // Store old position for swept collision detection
+            const oldX = proj.x;
+            const oldY = proj.y;
+            
             // Move projectile in straight line
             proj.x += Math.cos(proj.angle) * GAME_CONFIG.PROJECTILE_SPEED * (deltaTime / 1000);
             proj.y += Math.sin(proj.angle) * GAME_CONFIG.PROJECTILE_SPEED * (deltaTime / 1000);
             
-            // Check collision with enemies
-            if (this.checkProjectileHits(proj)) {
+            // Check collision with enemies (using swept collision)
+            if (this.checkProjectileHits(proj, oldX, oldY)) {
                 return false; // Remove projectile if hit limit reached
             }
             
@@ -67,8 +71,8 @@ const ProjectileSystem = {
         });
     },
     
-    // Check if projectile hit any enemies (piercing logic)
-    checkProjectileHits(proj) {
+    // Check if projectile hit any enemies (piercing logic with swept collision)
+    checkProjectileHits(proj, oldX, oldY) {
         const enemies = gameState.units.filter(u => 
             !u.isDead && 
             u.owner !== proj.owner && 
@@ -79,9 +83,14 @@ const ProjectileSystem = {
         for (let enemy of enemies) {
             if (proj.hitUnits.has(enemy.id)) continue;
             
-            const dist = MathUtils.distance2D(proj, enemy);
+            // Use swept collision: check if line segment from old to new position intersects enemy
+            const closestPoint = this.closestPointOnLine(oldX, oldY, proj.x, proj.y, enemy.x, enemy.y);
+            const dist = Math.sqrt(
+                Math.pow(closestPoint.x - enemy.x, 2) + 
+                Math.pow(closestPoint.y - enemy.y, 2)
+            );
             
-            if (dist < 12) {
+            if (dist < 15) { // Slightly larger hit radius for swept collision
                 // Play hit sound
                 SoundSystem.playHit();
                 
@@ -106,6 +115,26 @@ const ProjectileSystem = {
         }
         
         return false;
+    },
+    
+    // Find closest point on line segment to a target point (for swept collision)
+    closestPointOnLine(x1, y1, x2, y2, px, py) {
+        const dx = x2 - x1;
+        const dy = y2 - y1;
+        const lengthSquared = dx * dx + dy * dy;
+        
+        if (lengthSquared === 0) {
+            return { x: x1, y: y1 };
+        }
+        
+        // Calculate parameter t for closest point
+        let t = ((px - x1) * dx + (py - y1) * dy) / lengthSquared;
+        t = Math.max(0, Math.min(1, t)); // Clamp to [0, 1]
+        
+        return {
+            x: x1 + t * dx,
+            y: y1 + t * dy
+        };
     },
     
     // Clean up old projectiles
