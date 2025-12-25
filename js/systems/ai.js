@@ -158,8 +158,8 @@ function aiPurchaseUnits() {
     
     if (!definition || gameState.ai.gold < definition.cost) return;
     
-    // Determine position based on unit type
-    const { xPos, yPos } = getAIUnitPosition(definition.type, aiTemplateUnits);
+    // Determine position based on unit type (or random for Noob)
+    const { xPos, yPos } = getAIUnitPosition(definition.type, aiTemplateUnits, strategy);
     
     if (xPos === null || yPos === null) return;
     
@@ -205,8 +205,39 @@ function tryAIUpgrade(strategy) {
     }
 }
 
-function getAIUnitPosition(unitType, existingUnits) {
-    // Determine position based on unit type
+function getAIUnitPosition(unitType, existingUnits, strategy = null) {
+    // The Noob places units randomly without strategy
+    if (strategy && strategy.badPlacement) {
+        const width = DOM.aiZone.offsetWidth;
+        const height = DOM.aiZone.offsetHeight;
+        
+        // Try to find a valid position anywhere in the zone
+        for (let attempt = 0; attempt < 30; attempt++) {
+            const xPos = Math.random() * (width - 50) + 25;
+            const yPos = Math.random() * (height - 50) + 25;
+            
+            // Check collision
+            let hasCollision = false;
+            for (let existing of existingUnits) {
+                const dist = Math.sqrt(
+                    Math.pow(existing.x - xPos, 2) + 
+                    Math.pow(existing.y - yPos, 2)
+                );
+                if (dist < GAME_CONFIG.MIN_UNIT_DISTANCE) {
+                    hasCollision = true;
+                    break;
+                }
+            }
+            
+            if (!hasCollision) {
+                return { xPos, yPos };
+            }
+        }
+        
+        return { xPos: null, yPos: null };
+    }
+    
+    // Normal strategic placement
     let xMin, xMax;
     const width = DOM.aiZone.offsetWidth;
     
@@ -322,8 +353,8 @@ function playerAIPurchaseUnits() {
     
     if (!definition || gameState.player.gold < definition.cost) return;
     
-    // Determine position based on unit type (mirrored for left side)
-    const { xPos, yPos } = getPlayerAIUnitPosition(definition.type, playerTemplateUnits);
+    // Determine position based on unit type (mirrored for left side, or random for Noob)
+    const { xPos, yPos } = getPlayerAIUnitPosition(definition.type, playerTemplateUnits, strategy);
     
     if (xPos === null || yPos === null) return;
     
@@ -367,8 +398,39 @@ function tryPlayerAIUpgrade(strategy) {
     }
 }
 
-function getPlayerAIUnitPosition(unitType, existingUnits) {
-    // Determine position based on unit type (mirrored from right side)
+function getPlayerAIUnitPosition(unitType, existingUnits, strategy = null) {
+    // The Noob places units randomly without strategy
+    if (strategy && strategy.badPlacement) {
+        const width = DOM.playerZone.offsetWidth;
+        const height = DOM.playerZone.offsetHeight;
+        
+        // Try to find a valid position anywhere in the zone
+        for (let attempt = 0; attempt < 30; attempt++) {
+            const xPos = Math.random() * (width - 50) + 25;
+            const yPos = Math.random() * (height - 50) + 25;
+            
+            // Check collision
+            let hasCollision = false;
+            for (let existing of existingUnits) {
+                const dist = Math.sqrt(
+                    Math.pow(existing.x - xPos, 2) + 
+                    Math.pow(existing.y - yPos, 2)
+                );
+                if (dist < GAME_CONFIG.MIN_UNIT_DISTANCE) {
+                    hasCollision = true;
+                    break;
+                }
+            }
+            
+            if (!hasCollision) {
+                return { xPos, yPos };
+            }
+        }
+        
+        return { xPos: null, yPos: null };
+    }
+    
+    // Normal strategic placement (mirrored from right side)
     let xMin, xMax;
     const width = DOM.playerZone.offsetWidth;
     
