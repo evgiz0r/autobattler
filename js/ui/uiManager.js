@@ -286,18 +286,8 @@ function updateUpgradeButtons() {
             // Update upgrade button
             const upgradeBtn = document.querySelector(`.upgrade-btn[data-type="${type}"][data-owner="${owner}"]`);
             if (upgradeBtn) {
-                let countdownText = '';
-                if (owner === 'player') {
-                    const currentGold = gameState.player.gold;
-                    if (currentGold < upgradeCost) {
-                        const goldNeeded = upgradeCost - currentGold;
-                        const roundIncome = GAME_CONFIG.ROUND_GOLD_BASE + (gameState.round * GAME_CONFIG.ROUND_GOLD_PER_ROUND);
-                        const roundsNeeded = Math.ceil(goldNeeded / roundIncome);
-                        countdownText = ` <span style="color: #f39c12; font-size: 9px;">(+1 in ${roundsNeeded}r)</span>`;
-                    }
-                }
                 upgradeBtn.innerHTML = `
-                    <div>Upgrade (${upgradeCost}g)${countdownText}</div>
+                    <div>Upgrade (${upgradeCost}g)</div>
                     <small>Lvl ${upgradeLevel} → ${upgradeLevel + 1}</small>
                 `;
             }
@@ -343,8 +333,8 @@ function setupEventListeners() {
     DOM.playerZone.addEventListener('click', (e) => {
         if (gameState.selectedUnitType) {
             const rect = DOM.playerZone.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
+            const x = e.clientX - rect.left - 10; // Center the unit (half of 20px width)
+            const y = e.clientY - rect.top - 10; // Center the unit (half of 20px height)
             placeUnit(gameState.selectedUnitType, x, y);
         }
     });

@@ -453,6 +453,7 @@ body {
     gap: 3px;
     position: relative;
     width: 100px;
+    min-height: 70px;
     flex-shrink: 0;
 }
 
@@ -463,9 +464,11 @@ body {
 }
 
 .buy-btn .unit-stats {
-    font-size: 9px;
+    font-size: 8px;
     color: #95a5a6;
-    line-height: 1.2;
+    line-height: 1.3;
+    font-family: 'Courier New', monospace;
+    word-wrap: break-word;
 }
 
 .buy-btn:hover:not(:disabled) {
@@ -736,17 +739,20 @@ button:disabled {
     gap: 1px;
     align-items: center;
     font-size: 11px;
-    min-width: 80px;
+    width: 80px;
+    min-height: 50px;
 }
 
 .upgrade-btn div {
     font-weight: bold;
     font-size: 11px;
+    word-wrap: break-word;
 }
 
 .upgrade-btn small {
     font-size: 9px;
     opacity: 0.9;
+    word-wrap: break-word;
 }
 
 .upgrade-btn:hover:not(:disabled) {
@@ -780,4 +786,31 @@ button:disabled {
     pointer-events: none !important;
     opacity: 0.6 !important;
     z-index: 9999;
+}
+
+/* Failed placement indicator */
+.placement-failed {
+    position: absolute;
+    color: #e74c3c;
+    font-size: 30px;
+    font-weight: bold;
+    pointer-events: none;
+    z-index: 10000;
+    animation: failedPlacement 0.5s ease-out;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+@keyframes failedPlacement {
+    0% {
+        opacity: 1;
+        transform: scale(0.5);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.2);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(0.8);
+    }
 }

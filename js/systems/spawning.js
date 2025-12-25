@@ -1,12 +1,25 @@
 // Spawning system - handles unit placement and round management
 
+function showFailedPlacement(x, y) {
+    const indicator = document.createElement('div');
+    indicator.className = 'placement-failed';
+    indicator.textContent = '✕';
+    indicator.style.left = (x - 15) + 'px';
+    indicator.style.top = (y - 15) + 'px';
+    DOM.playerZone.appendChild(indicator);
+    
+    setTimeout(() => {
+        indicator.remove();
+    }, 500);
+}
+
 function placeUnit(unitType, x, y) {
     const definition = UNIT_DEFINITIONS[unitType];
     if (!definition) return;
     
     if (gameState.player.gold < definition.cost) {
         console.log('Not enough gold');
-        // Do not remove or hide the cursor preview; just return
+        showFailedPlacement(x, y);
         return;
     }
     
@@ -18,6 +31,7 @@ function placeUnit(unitType, x, y) {
     // Check unit limit
     if (templateUnits.length >= GAME_CONFIG.MAX_UNITS_PER_ZONE) {
         console.log(`Maximum units reached (${GAME_CONFIG.MAX_UNITS_PER_ZONE})`);
+        showFailedPlacement(x, y);
         return;
     }
     
@@ -29,7 +43,7 @@ function placeUnit(unitType, x, y) {
         );
         if (dist < GAME_CONFIG.MIN_UNIT_DISTANCE) {
             console.log('Too close to another unit');
-            ShopManager.deselectUnit();
+            showFailedPlacement(x, y);
             return;
         }
     }
