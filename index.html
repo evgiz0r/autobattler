@@ -14,7 +14,7 @@
                 <h3>Player</h3>
                 <button id="pause-btn" style="margin-top: 10px;">Pause</button>
                 <button id="restart-btn" style="margin-top: 5px;">Restart</button>
-                <div style="margin-top: 5px; display: flex; gap: 4px;">
+                <div style="margin-top: 5px; display: flex; gap: 3px;">
                     <button class="speed-btn active" data-speed="1">x1</button>
                     <button class="speed-btn" data-speed="2">x2</button>
                     <button class="speed-btn" data-speed="3">x3</button>
@@ -25,14 +25,17 @@
                 <button id="sound-toggle-btn" style="margin-top: 5px;">Sound: ON</button>
             </div>
             <div id="ai-stats">
-                <h3>AI Difficulty</h3>
-                <div id="difficulty-selector">
-                    <button class="difficulty-btn" data-difficulty="EASY">Easy</button>
-                    <button class="difficulty-btn active" data-difficulty="MEDIUM">Medium</button>
-                    <button class="difficulty-btn" data-difficulty="HARD">Hard</button>
+                <h3>AI Settings</h3>
+                <div style="margin-bottom: 10px;">
+                    <label style="font-size: 11px; display: block; margin-bottom: 3px;">Difficulty:</label>
+                    <div id="difficulty-selector">
+                        <button class="difficulty-btn" data-difficulty="EASY">Easy</button>
+                        <button class="difficulty-btn active" data-difficulty="MEDIUM">Medium</button>
+                        <button class="difficulty-btn" data-difficulty="HARD">Hard</button>
+                    </div>
                 </div>
-                <div style="margin-top: 10px;">
-                    <label style="font-size: 12px; display: block; margin-bottom: 5px;">Enemy AI:</label>
+                <div>
+                    <label style="font-size: 11px; display: block; margin-bottom: 3px;">Enemy AI:</label>
                     <div id="ai-strategy-selector" style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px;">
                         <button class="ai-strategy-btn active" data-strategy="RANDOM">Random</button>
                         <button class="ai-strategy-btn" data-strategy="SPAM_ONLY">Swarm</button>

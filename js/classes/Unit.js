@@ -151,7 +151,8 @@ class Unit {
     }
     
     canAttack(currentTime) {
-        return currentTime - this.lastAttackTime >= this.attackCooldown;
+        const effectiveCooldown = this.attackCooldown / gameState.gameSpeed;
+        return currentTime - this.lastAttackTime >= effectiveCooldown;
     }
     
     isInvulnerable(currentTime) {

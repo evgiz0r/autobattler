@@ -66,7 +66,8 @@ class HealerBehavior extends UnitBehavior {
     }
     
     healAllies(allies, currentTime) {
-        if (currentTime - this.unit.lastAttackTime < this.unit.attackCooldown) {
+        const effectiveCooldown = this.unit.attackCooldown / gameState.gameSpeed;
+        if (currentTime - this.unit.lastAttackTime < effectiveCooldown) {
             return;
         }
         
