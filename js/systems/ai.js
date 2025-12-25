@@ -16,9 +16,9 @@ const AI_STRATEGIES = {
     },
     RANGED_SPECIALIST: {
         name: 'The Sniper',
-        upgradeChance: 0.25,
+        upgradeChance: 0.7, // Much higher base upgrade chance
         preferredUnit: 'ranged',
-        preferredUpgradeChance: 0.75, // Very aggressive upgrade for favorite
+        preferredUpgradeChance: 0.98, // Almost always upgrade ranged if possible
         description: 'Upgrades ranged units and builds them almost exclusively'
     },
     MELEE_SPECIALIST: {
@@ -196,7 +196,17 @@ function tryAIUpgrade(strategy) {
     let typeToUpgrade;
     let isPreferredUpgrade = false;
     
-    if (strategy.preferredUnit && Math.random() < 0.8) {
+    // For The Sniper, almost always upgrade ranged
+    if (strategy.name === 'The Sniper') {
+        if (Math.random() < 0.98) {
+            typeToUpgrade = 'ranged';
+            isPreferredUpgrade = true;
+        } else {
+            // Rarely upgrade something else
+            const types = ['melee', 'caster', 'healer'];
+            typeToUpgrade = types[Math.floor(Math.random() * types.length)];
+        }
+    } else if (strategy.preferredUnit && Math.random() < 0.8) {
         // 80% chance to upgrade preferred unit if strategy has one
         typeToUpgrade = strategy.preferredUnit;
         isPreferredUpgrade = true;
