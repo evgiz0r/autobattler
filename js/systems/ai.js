@@ -4,9 +4,9 @@
 const AI_STRATEGIES = {
     SPAM_ONLY: {
         name: 'The Swarm',
-        upgradeChance: 0,
+        upgradeChance: 0.05, // Upgrades occasionally to spend excess gold
         preferredUnit: null, // Random selection
-        description: 'Builds units non-stop, never upgrades'
+        description: 'Builds units non-stop, upgrades rarely'
     },
     AGGRESSIVE_UPGRADE: {
         name: 'The Perfectionist',

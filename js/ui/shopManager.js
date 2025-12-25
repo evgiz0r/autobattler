@@ -93,7 +93,10 @@ const ShopManager = {
         
         if (type === 'healer') {
             const heal = Math.round(def.healAmount * dmgMult);
-            return `HP:${hp} HEAL:${heal} TGTS:${def.maxTargets} RNG:${def.attackRange}`;
+            // Calculate scaled maxTargets: +1 target every 5 levels, capped at 5
+            const bonusTargets = Math.floor(upgradeLevel / 5);
+            const maxTargets = Math.min(def.maxTargets + bonusTargets, 5);
+            return `HP:${hp} HEAL:${heal} TGTS:${maxTargets} RNG:${def.attackRange}`;
         } else if (type === 'caster') {
             const dmg = Math.round(def.damage * dmgMult);
             return `HP:${hp} DMG:${dmg} RNG:${def.attackRange} AOE:${def.aoeRadius}`;
