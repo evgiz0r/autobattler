@@ -324,6 +324,20 @@ function setupEventListeners() {
         location.reload();
     });
     
+    // AI settings toggle
+    document.getElementById('ai-settings-toggle').addEventListener('click', () => {
+        const content = document.getElementById('ai-settings-content');
+        const toggleBtn = document.getElementById('ai-settings-toggle');
+        
+        if (content.style.display === 'none') {
+            content.style.display = 'block';
+            toggleBtn.classList.add('expanded');
+        } else {
+            content.style.display = 'none';
+            toggleBtn.classList.remove('expanded');
+        }
+    });
+    
     // Speed control buttons
     document.querySelectorAll('.speed-btn').forEach(btn => {
         btn.addEventListener('click', () => {

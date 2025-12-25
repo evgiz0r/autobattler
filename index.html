@@ -11,31 +11,35 @@
         <div id="first-unit-message">Place Your First Unit!</div>
         <div id="ui-top">
             <div id="player-stats">
-                <h3>Player</h3>
-                <button id="pause-btn" style="margin-top: 10px;">Pause</button>
-                <button id="restart-btn" style="margin-top: 5px;">Restart</button>
-                <div style="margin-top: 5px; display: flex; gap: 3px;">
+                <h3 style="font-size: 14px; margin-bottom: 8px;">Player</h3>
+                <button id="pause-btn" class="control-btn">Pause</button>
+                <button id="restart-btn" class="control-btn">Restart</button>
+                <div style="margin-top: 4px; display: flex; gap: 3px; max-width: 120px;">
                     <button class="speed-btn active" data-speed="1">x1</button>
                     <button class="speed-btn" data-speed="2">x2</button>
                     <button class="speed-btn" data-speed="3">x3</button>
                 </div>
-                <button id="ai-vs-ai-btn" style="margin-top: 5px;">AI vs AI</button>
-                <button id="infinite-mode-btn" style="margin-top: 5px;">Infinite Mode: OFF</button>
-                <button id="target-lines-btn" style="margin-top: 5px;">Hide Target Lines</button>
-                <button id="sound-toggle-btn" style="margin-top: 5px;">Sound: ON</button>
+                <button id="ai-vs-ai-btn" class="control-btn">AI vs AI</button>
+                <button id="infinite-mode-btn" class="control-btn">Infinite Mode: OFF</button>
+                <button id="target-lines-btn" class="control-btn">Hide Target Lines</button>
+                <button id="sound-toggle-btn" class="control-btn">Sound: ON</button>
             </div>
             <div id="ai-stats">
-                <h3>AI Settings</h3>
-                <div style="margin-bottom: 10px;">
-                    <label style="font-size: 11px; display: block; margin-bottom: 3px;">Difficulty:</label>
-                    <div id="difficulty-selector">
-                        <button class="difficulty-btn" data-difficulty="EASY">Easy</button>
-                        <button class="difficulty-btn active" data-difficulty="MEDIUM">Medium</button>
-                        <button class="difficulty-btn" data-difficulty="HARD">Hard</button>
-                    </div>
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                    <h3 style="font-size: 14px; margin: 0;">AI Settings</h3>
+                    <button id="ai-settings-toggle" class="toggle-btn">▼</button>
                 </div>
-                <div>
-                    <label style="font-size: 11px; display: block; margin-bottom: 3px;">Enemy AI:</label>
+                <div id="ai-settings-content" style="display: none;">
+                    <div style="margin-bottom: 8px;">
+                        <label style="font-size: 10px; display: block; margin-bottom: 3px;">Difficulty:</label>
+                        <div id="difficulty-selector">
+                            <button class="difficulty-btn" data-difficulty="EASY">Easy</button>
+                            <button class="difficulty-btn active" data-difficulty="MEDIUM">Medium</button>
+                            <button class="difficulty-btn" data-difficulty="HARD">Hard</button>
+                        </div>
+                    </div>
+                    <div>
+                        <label style="font-size: 10px; display: block; margin-bottom: 3px;">Enemy AI:</label>
                     <div id="ai-strategy-selector" style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px;">
                         <button class="ai-strategy-btn active" data-strategy="RANDOM">Random</button>
                         <button class="ai-strategy-btn" data-strategy="SPAM_ONLY">Swarm</button>
