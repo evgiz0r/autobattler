@@ -22,15 +22,17 @@ const AI_STRATEGIES = {
         preferredUnit: 'ranged',
         preferredUpgradeChance: 0.98, // Almost always upgrade ranged if possible
         buyEarlyMultiplier: 1.2,
-        description: 'Upgrades ranged units and builds them almost exclusively'
+        description: 'Upgrades ranged units and builds them almost exclusively',
+        secondaryChance: 0.1
     },
     MELEE_SPECIALIST: {
         name: 'The Juggernaut',
-        upgradeChance: 0.15,
+        upgradeChance: 0.7,
         preferredUnit: 'melee',
-        preferredUpgradeChance: 0.6, // Higher chance to upgrade favorite
+        preferredUpgradeChance: 0.98, // Higher chance to upgrade favorite
         buyEarlyMultiplier: 1.3,
-        description: 'Upgrades melee units and builds them almost exclusively'
+        description: 'Upgrades melee units and builds them almost exclusively',
+        secondaryChance: 0.1
     },
     CASTER_SPECIALIST: {
         name: 'The Archmage',
@@ -56,8 +58,8 @@ const AI_STRATEGIES = {
     NOOB: {
         name: 'The Noob',
         upgradeChance: 0.02, // Rarely upgrades (2%)
-        preferredUnit: 'melee', // Mostly builds melee (bad strategy)
-        preferredChance: 0.7, // 70% melee, 30% random
+        preferredUnit: 'caster', // Mostly builds melee (bad strategy)
+        preferredChance: 0.2, 
         buyChanceMultiplier: 0.3, // Buys 3x less frequently
         buyEarlyMultiplier: 0.5,
         badPlacement: true, // Places units randomly without strategy

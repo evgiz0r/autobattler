@@ -8,19 +8,19 @@ const UNIT_DEFINITIONS = {
         maxHp: 120,
         damage: 16,
         attackRange: 35,
-        attackCooldown: 5000,
+        attackCooldown: 6000,
         speed: 90,
-        aoeRadius: 10
+        aoeRadius: 30
     },
     ranged: {
         name: 'Ranged',
         type: 'ranged',
-        cost: 25,
+        cost: 30,
         hp: 45,
         maxHp: 35,
         damage: 12,
         attackRange: 120,
-        attackCooldown: 4000,
+        attackCooldown: 8000,
         speed: 80
     },
     caster: {
@@ -31,7 +31,7 @@ const UNIT_DEFINITIONS = {
         maxHp: 100,
         damage: 15,
         attackRange: 80,
-        attackCooldown: 9000,
+        attackCooldown: 10000,
         speed: 65,
         aoeRadius: 20
     },
@@ -43,7 +43,7 @@ const UNIT_DEFINITIONS = {
         maxHp: 80,
         damage: 0,
         healAmount: 12,
-        maxTargets: 3,
+        maxTargets: 2,
         attackRange: 30,
         attackCooldown: 6000,
         speed: 75,
